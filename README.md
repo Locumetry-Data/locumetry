@@ -1,7 +1,7 @@
 <p align="center"><img src="https://locumetry.com/static/icon-512.png" width="72" alt=""></p>
 <h1 align="center">Locumetry</h1>
 <p align="center">District-level economic and location intelligence for Türkiye.<br>
-<a href="https://locumetry.com">locumetry.com</a> · <a href="https://locumetry.com/api/v1/docs">API reference</a> · <a href="https://locumetry.com/methodology">Methodology</a> · <a href="https://locumetry.com/pricing">Pricing</a></p>
+<a href="https://locumetry.com">locumetry.com</a> · <a href="https://locumetry-data.github.io/locumetry/">API guide</a> · <a href="https://locumetry.com/api/v1/docs">OpenAPI reference</a> · <a href="https://locumetry.com/methodology">Methodology</a> · <a href="https://locumetry.com/pricing">Pricing</a></p>
 
 Locumetry answers one question for people who choose places: **which districts of Türkiye fit, and why.**
 It covers all 973 districts in 81 provinces on one consistent boundary set, with more than 1.2 million
@@ -9,7 +9,8 @@ observations going back to 2000, and turns them into scores, labels and evidence
 screened and exported.
 
 This repository is the public home of the product: what it is, how it works, how to use the API, and where to
-report problems. The service itself runs at [locumetry.com](https://locumetry.com).
+report problems. The service itself runs at [locumetry.com](https://locumetry.com); the
+[API guide](https://locumetry-data.github.io/locumetry/) documents every endpoint with real responses and recipes.
 
 ## What you get
 
@@ -73,7 +74,7 @@ Every request carries your key in the `X-API-Key` header. Keys are issued with a
 [pricing page](https://locumetry.com/pricing); write to hello@locumetry.com for an evaluation key.
 
 ```bash
-curl -s https://locumetry.com/api/v1/districts/TR_06_1130 -H "X-API-Key: $LOCUMETRY_API_KEY"
+curl -s https://locumetry.com/api/v1/districts/TR_06_1747 -H "X-API-Key: $LOCUMETRY_API_KEY"
 ```
 
 ```python
@@ -82,33 +83,53 @@ import requests
 api = requests.Session()
 api.headers["X-API-Key"] = "your key"
 
-# Affluent, gaining momentum, not yet saturated, in the Aegean (NUTS1 region TR3)
+# Affluent, gaining momentum, not yet saturated, at least 100,000 residents; thresholds are national percentiles
 hits = api.get("https://locumetry.com/api/v1/screen", params={
     "min_score": ["affluence_score:75", "economic_momentum_score:60"],
     "max_score": ["commercial_saturation_score:50"],
-    "region": "TR3",
+    "min_population": 100000,
     "sort": "commercial_opportunity_score",
     "limit": 10,
 }).json()
 for row in hits:
-    print(row["geo_id"], row["name"], row["province"], row["scores"]["commercial_opportunity_score"])
+    print(row["geo_id"], row["name"], row["province"], row["scores"]["commercial_opportunity_score"]["percentile"])
+# TR_06_1747 Sincan Ankara 100
+# TR_06_1746 Mamak Ankara 98.8
+# ...
 ```
 
 | Endpoint | Returns |
 |---|---|
 | `/districts`, `/provinces` | the geography, filterable by province or name |
-| `/districts/{geo_id}` | one district: latest scores, labels and measured features |
-| `/districts/{geo_id}/history` | a district's features over time |
-| `/districts/{geo_id}/similar` | the districts that look most like it |
+| `/districts/{geo_id}` | one district: latest scores with their inputs, labels with evidence, every measured feature |
+| `/districts/{geo_id}/history` | a district's features by year |
+| `/districts/{geo_id}/observations` | the publisher's raw numbers behind the features, with period, unit and source |
+| `/districts/{geo_id}/similar` | the districts that look most like it, and where they differ |
 | `/screen` | districts matching label and percentile conditions, sorted by a score |
-| `/rankings` | national or regional ranking on one score |
-| `/labels`, `/scores`, `/features`, `/metrics` | the catalogues: what each label, score and feature means |
-| `/neighborhoods`, `/h3` | neighbourhood population and hexagonal place grids |
-| `/usage` | your calls this minute and your limit |
+| `/rankings`, `/features` | national or regional ranking on one score, or on one measured feature |
+| `/scores/history` | a district's scores by year |
+| `/labels`, `/scores`, `/catalog/features`, `/metrics` | the catalogues: what each label, score, feature and metric means |
+| `/neighborhoods`, `/h3` | neighbourhood population; a district as a hexagon grid with population and distances |
+| `/usage`, `/health` | your meter; the service's state |
 
-The full reference with every parameter and field is at
-[locumetry.com/api/v1/docs](https://locumetry.com/api/v1/docs). Runnable versions of the calls above are in
-[`examples/`](examples/).
+The [API guide](https://locumetry-data.github.io/locumetry/) shows each endpoint with a real response and the
+parameters it takes; the [OpenAPI reference](https://locumetry.com/api/v1/docs) is generated from the service.
+
+### Examples
+
+| Script | What it does |
+|---|---|
+| [`examples/api_quickstart.py`](examples/api_quickstart.py) | find a district, read its profile, run a screen, read a ranking, check your meter |
+| [`examples/district_profile.py`](examples/district_profile.py) | a one-page profile: scores, labels with evidence, key features, five-year history |
+| [`examples/screen_to_csv.py`](examples/screen_to_csv.py) | run a screen and write the shortlist to CSV |
+| [`examples/lookalikes.py`](examples/lookalikes.py) | the ten districts most like a given one, outside its province |
+| [`examples/quickstart.js`](examples/quickstart.js) | the same first steps in JavaScript (Node 18+) |
+| [`examples/screen.sh`](examples/screen.sh) | the screen with `curl` |
+
+```bash
+pip install -r examples/requirements.txt
+LOCUMETRY_API_KEY=... python examples/api_quickstart.py
+```
 
 ## Reading the numbers
 

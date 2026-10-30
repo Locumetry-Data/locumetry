@@ -1,0 +1,479 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Locumetry API Guide</title>
+<meta name="description" content="How to use the Locumetry API: authentication, district identifiers, every endpoint with real responses, and recipes for screening, comparing and tracking districts of Türkiye.">
+<link rel="icon" href="logo.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+:root{--ink:#0b1f33;--ink-2:#132b45;--fg:#1c2b36;--muted:#5f6f7b;--faint:#8a98a3;--line:#e5e7eb;--bg:#f8fafc;--card:#fff;--accent:#0ea5a8;--accent-2:#0b7f82;--accent-soft:#e3f5f5;--code:#f1f5f9;--radius:14px;--shadow:0 1px 2px rgba(11,31,51,.05),0 8px 24px -16px rgba(11,31,51,.18)}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--ink:#e6edf3;--ink-2:#cbd5e1;--fg:#d5dde5;--muted:#93a1ad;--faint:#6b7a86;--line:#223446;--bg:#0b1620;--card:#111f2c;--accent:#2dd4bf;--accent-2:#5eead4;--accent-soft:#12302f;--code:#0f1a25}}
+:root[data-theme=dark]{--ink:#e6edf3;--ink-2:#cbd5e1;--fg:#d5dde5;--muted:#93a1ad;--faint:#6b7a86;--line:#223446;--bg:#0b1620;--card:#111f2c;--accent:#2dd4bf;--accent-2:#5eead4;--accent-soft:#12302f;--code:#0f1a25}
+*{box-sizing:border-box}html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:15.5px;line-height:1.6}
+a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+h1,h2,h3,h4{margin:0;color:var(--ink);letter-spacing:-.01em;line-height:1.2}
+h1{font-size:40px;font-weight:700;letter-spacing:-.025em}h2{font-size:24px;font-weight:650;margin-top:56px;padding-top:8px}h3{font-size:17px;font-weight:600;margin-top:28px}h4{font-size:14px;font-weight:600;margin-top:18px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+p{margin:12px 0}code,pre{font-family:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13.5px}
+code{background:var(--code);padding:2px 6px;border-radius:6px}
+pre{background:var(--ink);color:#e6edf3;padding:16px 18px;border-radius:12px;overflow-x:auto;line-height:1.55;margin:14px 0}pre code{background:none;padding:0;color:inherit}
+:root[data-theme=dark] pre,:root:not([data-theme=light]) pre{background:#071019}@media (prefers-color-scheme:light){:root:not([data-theme=dark]) pre{background:#0b1f33}}
+.topbar{background:#0b1f33;color:#fff;position:sticky;top:0;z-index:5}
+.topbar .wrap{display:flex;align-items:center;gap:20px;min-height:60px}
+.brand{display:inline-flex;align-items:center;gap:10px;color:#fff;font-weight:700;font-size:19px;letter-spacing:-.02em}.brand:hover{text-decoration:none}.brand svg{width:28px;height:28px}.brand small{font-weight:500;color:rgba(255,255,255,.6);font-size:14px;margin-left:2px}
+.topbar nav{margin-left:auto;display:flex;gap:4px;font-size:14px;font-weight:500}.topbar nav a{color:rgba(255,255,255,.8);padding:7px 10px;border-radius:8px;white-space:nowrap}.topbar nav a:hover{color:#fff;background:rgba(255,255,255,.08);text-decoration:none}
+.wrap{max-width:1100px;margin:0 auto;padding:0 20px}
+.hero{padding:56px 0 36px;border-bottom:1px solid var(--line)}
+.eyebrow{display:inline-block;margin-bottom:14px;font-size:12px;font-weight:650;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+.hero p.lead{font-size:19px;color:var(--muted);max-width:760px;margin:16px 0 24px}
+.btns{display:flex;gap:10px;flex-wrap:wrap}.btn{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:10px;font-weight:600;font-size:14.5px;border:1px solid var(--line);background:var(--card);color:var(--ink)}.btn:hover{text-decoration:none;border-color:var(--accent)}.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:36px}.stat{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px;box-shadow:var(--shadow)}.stat strong{display:block;font-size:26px;color:var(--ink);letter-spacing:-.02em;font-variant-numeric:tabular-nums}.stat span{color:var(--muted);font-size:13.5px}
+.layout{display:grid;grid-template-columns:230px 1fr;gap:48px;padding:32px 0 80px}
+aside{position:sticky;top:76px;align-self:start;font-size:14px;max-height:calc(100vh - 90px);overflow:auto}aside a{display:block;color:var(--muted);padding:4px 0}aside a.sub{padding-left:12px;font-size:13px}aside a:hover{color:var(--accent);text-decoration:none}aside .h{font-size:12px;font-weight:650;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);margin:14px 0 6px}aside .h:first-child{margin-top:0}
+main{min-width:0}
+table{width:100%;border-collapse:collapse;margin:16px 0;font-size:14px}th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}th{color:var(--muted);font-weight:600;font-size:12.5px;letter-spacing:.04em;text-transform:uppercase}td:first-child{font-weight:600;color:var(--ink);white-space:nowrap}
+.table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--card)}.table-wrap table{margin:0}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:18px}.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow)}.card h3{margin:0 0 6px;font-size:15.5px}.card p{margin:0;color:var(--muted);font-size:14px}
+.note{border-left:3px solid var(--accent);background:var(--accent-soft);padding:12px 16px;border-radius:0 10px 10px 0;margin:16px 0}
+.endpoint{margin-top:40px;padding-top:8px}.endpoint .sig{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:6px 0 4px}.method{font-family:"JetBrains Mono",monospace;font-size:12px;font-weight:600;letter-spacing:.04em;background:var(--accent-soft);color:var(--accent-2);padding:3px 8px;border-radius:6px}.path{font-family:"JetBrains Mono",monospace;font-size:15px;color:var(--ink);font-weight:500}
+.endpoint p.what{color:var(--muted);margin-top:4px}
+dl{display:grid;grid-template-columns:max-content 1fr;gap:6px 18px;margin:12px 0}dt{font-weight:600;color:var(--ink)}dd{margin:0;color:var(--fg)}dt code{font-size:13px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}.chip{font-size:12.5px;padding:3px 9px;border:1px solid var(--line);border-radius:999px;background:var(--card);color:var(--fg)}
+footer{border-top:1px solid var(--line);padding:28px 0;color:var(--muted);font-size:13.5px}footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+@media (max-width:900px){.layout{grid-template-columns:1fr;gap:24px}aside{position:static;max-height:none;display:flex;flex-wrap:wrap;gap:4px 14px}aside .h{width:100%}aside a.sub{display:none}.stats{grid-template-columns:1fr 1fr}.cards{grid-template-columns:1fr}h1{font-size:32px}.topbar nav{display:none}dl{grid-template-columns:1fr}dd{margin-bottom:6px}}
+</style>
+</head>
+<body>
+<header class="topbar"><div class="wrap">
+<a class="brand" href="#"><svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M16 3C10.5 3 6 7.4 6 12.9c0 7.2 10 16.1 10 16.1s10-8.9 10-16.1C26 7.4 21.5 3 16 3z" fill="#0ea5a8"/><circle cx="16" cy="13" r="4.2" fill="#fff"/></svg>Locumetry <small>API guide</small></a>
+<nav><a href="#start">Start</a><a href="#endpoints">Endpoints</a><a href="#recipes">Recipes</a><a href="#reference">Scores &amp; labels</a><a href="https://locumetry.com/api/v1/docs">OpenAPI</a><a href="https://github.com/Locumetry-Data/locumetry">GitHub</a></nav>
+</div></header>
+
+<section class="hero"><div class="wrap">
+<span class="eyebrow">Locumetry API · v1</span>
+<h1>District intelligence for Türkiye, as JSON.</h1>
+<p class="lead">Scores, labels, measured features and history for all 973 districts and 81 provinces, behind one key and one header. This guide shows every endpoint with real responses and the recipes most people start from.</p>
+<div class="btns"><a class="btn primary" href="#start">Start in two minutes</a><a class="btn" href="https://locumetry.com/api/v1/docs">Interactive reference</a><a class="btn" href="https://github.com/Locumetry-Data/locumetry/tree/main/examples">Examples on GitHub</a></div>
+<div class="stats"><div class="stat"><strong>973 · 81</strong><span>districts and provinces, one boundary set</span></div><div class="stat"><strong>287</strong><span>features per district, each with period and source</span></div><div class="stat"><strong>15 · 48</strong><span>scores and labels, with the evidence behind them</span></div><div class="stat"><strong>2000 →</strong><span>history for the main series</span></div></div>
+</div></section>
+
+<div class="wrap layout">
+<aside>
+<p class="h">Guide</p>
+<a href="#start">Start</a><a href="#auth">Authentication</a><a href="#ids">Identifiers</a><a href="#reading">Reading the numbers</a>
+<p class="h">Endpoints</p>
+<a href="#ep-districts">/districts</a><a href="#ep-district">/districts/{geo_id}</a><a href="#ep-history">…/history</a><a href="#ep-observations">…/observations</a><a href="#ep-similar">…/similar</a><a href="#ep-provinces">/provinces</a><a href="#ep-screen">/screen</a><a href="#ep-rankings">/rankings</a><a href="#ep-features">/features</a><a href="#ep-scores-history">/scores/history</a><a href="#ep-labels">/labels</a><a href="#ep-catalog">catalogues</a><a href="#ep-neighborhoods">/neighborhoods</a><a href="#ep-h3">/h3</a><a href="#ep-usage">/usage, /health</a>
+<p class="h">Recipes</p>
+<a href="#r-screen">Site-selection screen</a><a href="#r-compare">Compare a shortlist</a><a href="#r-track">Track a district</a><a href="#r-lookalike">Find lookalikes</a><a href="#r-csv">Export to CSV</a>
+<p class="h">Reference</p>
+<a href="#scores">Scores</a><a href="#labels">Labels</a><a href="#errors">Errors and limits</a>
+</aside>
+<main>
+
+<h2 id="start" style="margin-top:0">Start</h2>
+<p>Base URL <code>https://locumetry.com/api/v1</code>. Every request is a GET, every response is JSON, and every request except <code>/health</code> carries your key in the <code>X-API-Key</code> header.</p>
+<pre><code>curl -s https://locumetry.com/api/v1/districts/TR_06_1747 \
+  -H "X-API-Key: $LOCUMETRY_API_KEY"</code></pre>
+<pre><code>import requests
+
+api = requests.Session()
+api.headers["X-API-Key"] = "your key"
+BASE = "https://locumetry.com/api/v1"
+
+sincan = api.get(f"{BASE}/districts/TR_06_1747").json()
+print(sincan["geo"]["name"], sincan["scores"]["affluence_score"]["percentile"])</code></pre>
+<pre><code>const res = await fetch("https://locumetry.com/api/v1/districts/TR_06_1747", {
+  headers: { "X-API-Key": process.env.LOCUMETRY_API_KEY },
+});
+const sincan = await res.json();
+console.log(sincan.geo.name, sincan.labels.map(l =&gt; l.label));</code></pre>
+<p>Keys come with a plan from the <a href="https://locumetry.com/pricing">pricing page</a>; for an evaluation key write to <a href="mailto:hello@locumetry.com">hello@locumetry.com</a>. Runnable versions of everything on this page are in the <a href="https://github.com/Locumetry-Data/locumetry/tree/main/examples">examples folder</a>.</p>
+
+<h2 id="auth">Authentication</h2>
+<p>The key goes in the header only. A key in the URL would end up in access logs, so query-string keys are not accepted. A missing or unknown key answers <code>401</code>; more requests per minute than your plan allows answers <code>429</code> with a <code>Retry-After</code> header saying how many seconds to wait. Each key is metered per day and route, and you can read your own meter at <a href="#ep-usage"><code>/usage</code></a>.</p>
+
+<h2 id="ids">Identifiers</h2>
+<p>Places are addressed by stable identifiers, never by name. Names change spelling and case between sources; identifiers do not.</p>
+<dl>
+<dt><code>TR_06</code></dt><dd>a province, by plate code (Ankara)</dd>
+<dt><code>TR_06_1747</code></dt><dd>a district, by TÜİK district code (Sincan)</dd>
+<dt><code>TR_06_1747_1838</code></dt><dd>a neighbourhood inside that district</dd>
+<dt><code>TR5</code></dt><dd>a NUTS1 region, used by the <code>region</code> filter (TR1 İstanbul, TR2 West Marmara, TR3 Aegean, TR4 East Marmara, TR5 West Anatolia, TR6 Mediterranean, TR7 Central Anatolia, TR8 West Black Sea, TR9 East Black Sea, TRA Northeast Anatolia, TRB Central East Anatolia, TRC Southeast Anatolia)</dd>
+</dl>
+<p>To find an identifier, list a province's districts with <code>/districts?province=TR_06</code> or search by name with <code>/districts?q=sincan</code>. Every geography object also carries <code>region_code</code>, <code>nuts3_code</code>, a centroid and its area.</p>
+
+<h2 id="reading">Reading the numbers</h2>
+<div class="cards">
+<div class="card"><h3>Scores are percentiles</h3><p><code>percentile</code> is the district's standing among all districts (or among provinces for the two province-level scores): 90 means higher than 90 percent of them. <code>score_value</code> is the underlying 0–100 value, <code>rank_national</code> and <code>rank_region</code> the positions.</p></div>
+<div class="card"><h3>Features carry a period</h3><p>Every feature value comes with the year it describes; observations carry the exact <code>period_date</code> (first day of the year, quarter or month) and the <code>source_id</code>.</p></div>
+<div class="card"><h3>Estimates are flagged</h3><p><code>is_estimated: true</code> marks a value that was allocated from a provincial or national figure rather than measured for that district. Treat it as context, not as a fact about the district.</p></div>
+</div>
+
+<h2 id="endpoints">Endpoints</h2>
+<p>Parameters are query parameters. A parameter shown as a list may be repeated: <code>?score=a&amp;score=b</code>.</p>
+
+<section class="endpoint" id="ep-districts">
+<div class="sig"><span class="method">GET</span><span class="path">/districts</span></div>
+<p class="what">The current districts, as geography objects.</p>
+<dl><dt><code>province</code></dt><dd>restrict to one province: <code>TR_06</code> or <code>06</code></dd><dt><code>q</code></dt><dd>name prefix, matched Turkish-aware (<code>sincan</code>, <code>SİNCAN</code> and <code>Sincan</code> are the same)</dd><dt><code>limit</code>, <code>offset</code></dt><dd>paging; limit defaults to 1000, at most 2000</dd></dl>
+<pre><code>GET /districts?province=TR_06&amp;limit=2
+
+[{"geo_id": "TR_06_1130", "geo_level": "district", "name": "Altındağ", "province_code": "06",
+  "district_code": "1130", "parent_geo_id": "TR_06", "region_code": "TR5", "nuts3_code": "TR510",
+  "centroid_lat": 39.9987, "centroid_lon": 32.9805, "area_km2": 161.44},
+ {"geo_id": "TR_06_1157", "name": "Ayaş", ...}]</code></pre>
+</section>
+
+<section class="endpoint" id="ep-district">
+<div class="sig"><span class="method">GET</span><span class="path">/districts/{geo_id}</span></div>
+<p class="what">One district in full: the geography, the latest value of every feature, every score with its inputs, and the labels with the evidence that fired them. Province-level scores are inherited from the district's province and marked <code>"level": "province"</code>.</p>
+<pre><code>GET /districts/TR_06_1747
+
+{"geo": {"geo_id": "TR_06_1747", "name": "Sincan", "parent_geo_id": "TR_06", "region_code": "TR5", ...},
+ "features": {
+   "population": {"value": 605366.0, "year": 2025, "is_estimated": false},
+   "age_0_14_share": {"value": 0.1784, "year": 2025, "is_estimated": true},
+   ... 286 features ...},
+ "scores": {
+   "affluence_score": {"score_value": 76.96, "percentile": 85.6, "rank_national": 141, "rank_region": 18,
+                       "period_date": "2026-01-01", "level": "district",
+                       "components": {"avg_daily_earning": 0.975, "cars_per_1000": 0.988, "gdp_per_capita_usd": 0.935, ...}},
+   ... 15 scores ...},
+ "labels": [
+   {"label": "commuter_town",
+    "description": "Dense, growing residential district with little local employment",
+    "evidence": {"population_density": 701.562, "workplaces_per_1000": 18.524, "population_growth_3y": 0.019, ...}},
+   ...]}</code></pre>
+<p><code>components</code> gives the standing of each input on a 0 to 1 scale, so you can see what carried a score. The weights that combine them are not published; the <a href="https://locumetry.com/methodology">methodology</a> explains what each score is for and how to read it.</p>
+</section>
+
+<section class="endpoint" id="ep-history">
+<div class="sig"><span class="method">GET</span><span class="path">/districts/{geo_id}/history</span></div>
+<p class="what">Every feature's values by year, for trajectories and charts.</p>
+<dl><dt><code>feature</code></dt><dd>list; restrict to these feature ids. Without it, all 287 are returned.</dd></dl>
+<pre><code>GET /districts/TR_06_1747/history?feature=population
+
+{"population": [..., {"year": 2023, "value": 571889.0, "is_estimated": false},
+                     {"year": 2024, "value": 590309.0, "is_estimated": false},
+                     {"year": 2025, "value": 605366.0, "is_estimated": false}]}</code></pre>
+</section>
+
+<section class="endpoint" id="ep-observations">
+<div class="sig"><span class="method">GET</span><span class="path">/districts/{geo_id}/observations</span></div>
+<p class="what">The raw observations behind the features, as published: exact period, period type, unit and source. Use this when you need the publisher's own number rather than a derived feature.</p>
+<dl><dt><code>metric</code></dt><dd>list; restrict to these metric ids (see <a href="#ep-catalog"><code>/metrics</code></a>)</dd></dl>
+<pre><code>GET /districts/TR_06_1747/observations?metric=population
+
+[..., {"metric_id": "population", "period_date": "2025-01-01", "period_type": "year",
+       "value": 605366.0, "unit": "persons", "source_id": "tuik"}]</code></pre>
+</section>
+
+<section class="endpoint" id="ep-similar">
+<div class="sig"><span class="method">GET</span><span class="path">/districts/{geo_id}/similar</span></div>
+<p class="what">The districts that look most like this one across all features, with the features where each differs most and the labels they share. The usual question: "where else would what works here work?"</p>
+<dl><dt><code>limit</code></dt><dd>1 to 25, default 10</dd><dt><code>exclude_province</code></dt><dd><code>true</code> to look outside the district's own province</dd></dl>
+<pre><code>GET /districts/TR_06_1747/similar?limit=2
+
+[{"rank": 1, "geo_id": "TR_06_1746", "name": "Mamak", "province": "Ankara", "distance": 0.994,
+  "differences": [{"feature": "Home sales to foreigners per 10k residents", "direction": "higher"},
+                  {"feature": "Active organised industrial zones", "direction": "lower"},
+                  {"feature": "Population growth, 3 years (annualised)", "direction": "lower"}],
+  "shared_labels": ["commuter_town", "growth_hotspot", "high_growth_underserved", "industrial_hub", "residential_zone"]},
+ {"rank": 2, "geo_id": "TR_06_2034", "name": "Pursaklar", ...}]</code></pre>
+</section>
+
+<section class="endpoint" id="ep-provinces">
+<div class="sig"><span class="method">GET</span><span class="path">/provinces</span> &nbsp;·&nbsp; <span class="path">/provinces/{geo_id}</span></div>
+<p class="what">The 81 provinces as geography objects; one province with its own features, the province-level scores and the list of its districts.</p>
+<pre><code>GET /provinces/TR_06
+
+{"geo": {"geo_id": "TR_06", "name": "Ankara", ...},
+ "features": {...},
+ "scores": {"business_activity_growth_score": {"score_value": 71.4, "percentile": 100.0, "rank_national": 1, ...},
+            "credit_stress_score": {...}},
+ "districts": [{"geo_id": "TR_06_1872", "name": "Akyurt"}, {"geo_id": "TR_06_1130", "name": "Altındağ"}, ... 25 ...]}</code></pre>
+</section>
+
+<section class="endpoint" id="ep-screen">
+<div class="sig"><span class="method">GET</span><span class="path">/screen</span></div>
+<p class="what">The site-selection query. Districts that carry every <code>label</code>, none of <code>without_label</code>, and stand at or above / below the given national percentiles, inside an optional province, region or population band, sorted by a score.</p>
+<dl>
+<dt><code>min_score</code></dt><dd>list of <code>score_id:percentile</code>, e.g. <code>affluence_score:75</code>; district-level scores only</dd>
+<dt><code>max_score</code></dt><dd>list of <code>score_id:percentile</code>, e.g. <code>commercial_saturation_score:50</code></dd>
+<dt><code>label</code>, <code>without_label</code></dt><dd>lists of label ids the district must carry / must not carry</dd>
+<dt><code>province</code>, <code>region</code></dt><dd><code>TR_35</code>; <code>TR3</code></dd>
+<dt><code>min_population</code>, <code>max_population</code></dt><dd>latest population bounds</dd>
+<dt><code>sort</code></dt><dd>a district-level score, default <code>commercial_opportunity_score</code></dd>
+<dt><code>limit</code></dt><dd>1 to 1000, default 100</dd>
+</dl>
+<pre><code>GET /screen?min_score=affluence_score:75&amp;min_score=economic_momentum_score:60
+           &amp;max_score=commercial_saturation_score:50&amp;sort=commercial_opportunity_score
+
+[{"geo_id": "TR_06_1747", "name": "Sincan", "province": "Ankara", "population": 605366.0,
+  "labels": ["commuter_town", "growth_hotspot", "high_growth_underserved", "industrial_hub", "residential_zone"],
+  "scores": {"commercial_opportunity_score": {"value": 84.9, "percentile": 100, "rank": 1},
+             "affluence_score": {"value": 77.0, "percentile": 85.6, "rank": 141},
+             "economic_momentum_score": {"value": 60.7, "percentile": 82.9, "rank": 167},
+             "commercial_saturation_score": {"value": 42.3, "percentile": 38.8, "rank": 596}}},
+ {"geo_id": "TR_06_1746", "name": "Mamak", "province": "Ankara", "population": 690329.0, ...},
+ {"geo_id": "TR_41_2061", "name": "Dilovası", "province": "Kocaeli", "population": 55355.0, ...},
+ ... 9 districts in all ...]</code></pre>
+<p>Only the scores named in the request plus the sort score are returned per row, so the result stays small. An empty list is a valid answer: the thresholds were too strict for that region.</p>
+</section>
+
+<section class="endpoint" id="ep-rankings">
+<div class="sig"><span class="method">GET</span><span class="path">/rankings</span></div>
+<p class="what">The current ranking on one score, nationally or within a province or region. Province-level scores rank provinces.</p>
+<dl><dt><code>score</code></dt><dd>default <code>commercial_opportunity_score</code></dd><dt><code>province</code>, <code>region</code></dt><dd>restrict the list; ranks stay national</dd><dt><code>ascending</code></dt><dd><code>true</code> for the bottom of the list</dd><dt><code>limit</code></dt><dd>default 50, at most 1000</dd></dl>
+<pre><code>GET /rankings?score=commercial_opportunity_score&amp;region=TR3&amp;limit=3
+
+[{"geo_id": "TR_35_1521", "name": "Menemen", "level": "district", "province": "İzmir",
+  "score_value": 76.81, "percentile": 96.6, "rank_national": 34, "rank_region": 1, "components": {...}},
+ {"geo_id": "TR_35_1682", "name": "Torbalı", ..., "rank_national": 36, "rank_region": 2},
+ {"geo_id": "TR_35_1128", "name": "Aliağa", ..., "rank_national": 43, "rank_region": 3}]</code></pre>
+</section>
+
+<section class="endpoint" id="ep-features">
+<div class="sig"><span class="method">GET</span><span class="path">/features</span></div>
+<p class="what">Districts ranked on one measured feature rather than a score: the largest populations, the fastest three-year growth, the most residents per pharmacy.</p>
+<dl><dt><code>feature</code></dt><dd>required; a feature id from <code>/catalog/features</code></dd><dt><code>year</code></dt><dd>a past year instead of the latest</dd><dt><code>ascending</code>, <code>limit</code></dt><dd>as for rankings</dd></dl>
+<pre><code>GET /features?feature=population_growth_3y&amp;year=2024&amp;limit=2
+
+[{"geo_id": "TR_33_1366", "name": "Gülnar", "province": "Mersin", "value": 0.134, "period_date": "2024-01-01", "is_estimated": false},
+ {"geo_id": "TR_54_1925", "name": "Ferizli", "province": "Sakarya", "value": 0.083, ...}]</code></pre>
+</section>
+
+<section class="endpoint" id="ep-scores-history">
+<div class="sig"><span class="method">GET</span><span class="path">/scores/history</span></div>
+<p class="what">A district's (or province's) scores by year, with percentile and ranks, for "is it rising or falling" questions.</p>
+<dl><dt><code>geo_id</code></dt><dd>required</dd><dt><code>score</code></dt><dd>list; restrict to these scores</dd></dl>
+<pre><code>GET /scores/history?geo_id=TR_06_1747&amp;score=affluence_score
+
+{"affluence_score": [..., {"year": 2025, "score_value": 88.04, "percentile": 93.3, "rank_national": 66, "rank_region": 15},
+                          {"year": 2026, "score_value": 76.96, "percentile": 85.6, "rank_national": 141, "rank_region": 18}]}</code></pre>
+</section>
+
+<section class="endpoint" id="ep-labels">
+<div class="sig"><span class="method">GET</span><span class="path">/labels</span> &nbsp;·&nbsp; <span class="path">/labels/{label}</span></div>
+<p class="what">Every label with its meaning and how many districts carry it; and the districts carrying one label, with the inputs that fired the rule.</p>
+<dl><dt><code>province</code></dt><dd>on <code>/labels/{label}</code>: restrict to one province</dd></dl>
+<pre><code>GET /labels
+
+[{"label": "growth_hotspot", "description": "Top-quartile overall growth proxy", "districts": 244},
+ {"label": "high_growth_underserved", "description": "Fast growth with below-median commercial saturation", "districts": 81},
+ ... 48 labels ...]
+
+GET /labels/high_growth_underserved?province=TR_06
+
+[{"geo_id": "TR_06_1187", "name": "Beypazarı", "province": "Ankara",
+  "evidence": {"growth_proxy_score": 76.907, "commercial_saturation_score": 46.11}},
+ {"geo_id": "TR_06_1747", "name": "Sincan", "province": "Ankara", "evidence": {...}}, ...]</code></pre>
+</section>
+
+<section class="endpoint" id="ep-catalog">
+<div class="sig"><span class="method">GET</span><span class="path">/catalog/features</span> &nbsp;·&nbsp; <span class="path">/scores</span> &nbsp;·&nbsp; <span class="path">/metrics</span></div>
+<p class="what">The catalogues. What each of the 287 features is, in which unit, which direction is better and how far back it goes; which inputs each of the 15 scores uses; and the 165 raw metrics with their publisher and native code.</p>
+<pre><code>GET /catalog/features
+
+[{"feature_id": "airport_access_score", "display_name": "Access to airports", "category": "accessibility",
+  "unit": "index", "higher_is": "better",
+  "description": "Access to airports from the district centre, counting nearer ones more than distant ones.",
+  "rows": 973, "first_period": "2026-01-01", "last_period": "2026-01-01", "has_estimates": false}, ...]
+
+GET /scores
+
+[{"score_id": "affluence_score", "level": "district",
+  "components": ["avg_daily_earning", "cars_per_1000", "deposits_per_capita", "gdp_per_capita_usd", "housing_unit_price", ...]}, ...]
+
+GET /metrics
+
+[{"metric_id": "bank_branches", "display_name": "Domestic bank branches", "category": "banking", "unit": "count",
+  "frequency": "quarterly", "source_id": "bddk_finturk", "geo_level_min": "province", ...}, ...]</code></pre>
+</section>
+
+<section class="endpoint" id="ep-neighborhoods">
+<div class="sig"><span class="method">GET</span><span class="path">/neighborhoods</span></div>
+<p class="what">The neighbourhoods of a district with their latest population, largest first.</p>
+<dl><dt><code>district</code></dt><dd>required</dd><dt><code>limit</code></dt><dd>default 2000, at most 5000</dd></dl>
+<pre><code>GET /neighborhoods?district=TR_06_1747&amp;limit=2
+
+[{"geo_id": "TR_06_1747_1838", "name": "Mustafa Kemal", "neighborhood_code": "1838", "kind": "uavt:mahalle", "population": 45079.0, "year": 2025},
+ {"geo_id": "TR_06_1747_1812", "name": "Pınarbaşı", ..., "population": 43428.0, "year": 2025}]</code></pre>
+</section>
+
+<section class="endpoint" id="ep-h3">
+<div class="sig"><span class="method">GET</span><span class="path">/h3</span></div>
+<p class="what">A district as a grid of H3 hexagons (resolution 7, about 5 km²), each with its estimated population and distances to the nearest bank, fuel station, hospital, pharmacy, school, supermarket, rail station and motorway junction. For maps and catchment work inside a district.</p>
+<dl><dt><code>district</code></dt><dd>required</dd><dt><code>feature</code></dt><dd>list; restrict to these cell features</dd></dl>
+<pre><code>GET /h3?district=TR_06_1747
+
+{"872d33020ffffff": {"population_estimate": 2472.4, "bank_distance_km": 21.02, "fuel_distance_km": 13.32,
+                     "hospital_distance_km": 23.40, "pharmacy_distance_km": 14.74, "supermarket_distance_km": 15.23,
+                     "school_distance_km": 14.82, "rail_station_distance_km": 16.52, "motorway_junction_distance_km": 9.58,
+                     "major_road_km": 0.0},
+ ... 155 cells ...}</code></pre>
+</section>
+
+<section class="endpoint" id="ep-usage">
+<div class="sig"><span class="method">GET</span><span class="path">/usage</span> &nbsp;·&nbsp; <span class="path">/health</span></div>
+<p class="what">Your own request counts per day and route (<code>days</code>, default 30); and the service's state, open without a key: whether last night's build finished and the data quality checks passed.</p>
+<pre><code>GET /usage?days=3
+
+[{"client_id": "…", "day": "2026-10-30", "path": "/screen", "requests": 1, "errors": 0},
+ {"client_id": "…", "day": "2026-10-30", "path": "/districts/{geo_id}", "requests": 1, "errors": 0}, ...]
+
+GET /health
+
+{"status": "ok", "pipeline": "fresh", "data_quality": {"pass": 697, "warn": 1},
+ "last_nightly": {"status": "ok", "finished_at": "2026-10-30T01:54:19Z", "stale": false}}</code></pre>
+</section>
+
+<h2 id="recipes">Recipes</h2>
+
+<h3 id="r-screen">A site-selection screen</h3>
+<p>"Affluent, gaining momentum, not yet commercially saturated, with at least 100,000 residents." Thresholds are national percentiles; start loose and tighten.</p>
+<pre><code>hits = api.get(f"{BASE}/screen", params={
+    "min_score": ["affluence_score:75", "economic_momentum_score:60"],
+    "max_score": ["commercial_saturation_score:50"],
+    "min_population": 100000,
+    "sort": "commercial_opportunity_score",
+    "limit": 25,
+}).json()
+for d in hits:
+    s = d["scores"]
+    print(f'{d["name"]:<14} {d["province"]:<10} opp {s["commercial_opportunity_score"]["percentile"]:5.1f}'
+          f'  afflu {s["affluence_score"]["percentile"]:5.1f}  satur {s["commercial_saturation_score"]["percentile"]:5.1f}')</code></pre>
+<p>Labels make the same question shorter: <code>label=high_growth_underserved&amp;min_population=100000</code> returns the districts that are growing fast with below-median saturation, 19 of them at the time of writing, Sincan first.</p>
+
+<h3 id="r-compare">Compare a shortlist</h3>
+<pre><code>ids = ["TR_06_1747", "TR_35_1521", "TR_41_2061"]
+rows = [api.get(f"{BASE}/districts/{g}").json() for g in ids]
+for r in rows:
+    pct = {k: round(v["percentile"]) for k, v in r["scores"].items() if v["level"] == "district"}
+    pop = r["features"]["population"]
+    print(r["geo"]["name"], pop["value"], pop["year"], pct["affluence_score"], pct["economic_momentum_score"],
+          [l["label"] for l in r["labels"]])</code></pre>
+
+<h3 id="r-track">Track a district over time</h3>
+<pre><code>hist = api.get(f"{BASE}/districts/TR_06_1747/history",
+               params={"feature": ["population", "workplaces_per_1000", "commercial_poi_density"]}).json()
+for feature, series in hist.items():
+    print(feature, [(p["year"], round(p["value"], 3)) for p in series[-5:]])
+
+scores = api.get(f"{BASE}/scores/history", params={"geo_id": "TR_06_1747", "score": "affluence_score"}).json()
+print([(p["year"], round(p["percentile"])) for p in scores["affluence_score"]])</code></pre>
+
+<h3 id="r-lookalike">Find lookalikes</h3>
+<p>You have one district that works. Ask for the ten most similar ones outside its own province, and read the differences before you believe the match.</p>
+<pre><code>twins = api.get(f"{BASE}/districts/TR_06_1747/similar", params={"limit": 10, "exclude_province": "true"}).json()
+for t in twins:
+    print(t["rank"], t["name"], t["province"], round(t["distance"], 2),
+          "; ".join(f'{d["feature"]} {d["direction"]}' for d in t["differences"]))</code></pre>
+
+<h3 id="r-csv">Export to CSV</h3>
+<pre><code>import csv
+rows = api.get(f"{BASE}/rankings", params={"score": "economic_vitality_score", "limit": 1000}).json()
+with open("economic_vitality.csv", "w", newline="") as f:
+    w = csv.writer(f)
+    w.writerow(["geo_id", "district", "province", "score", "percentile", "rank_national", "rank_region"])
+    for r in rows:
+        w.writerow([r["geo_id"], r["name"], r["province"], round(r["score_value"], 1), round(r["percentile"], 1),
+                    r["rank_national"], r["rank_region"]])</code></pre>
+<p>The <a href="https://github.com/Locumetry-Data/locumetry/tree/main/examples">examples folder</a> has these as complete scripts, including a shell version with <code>curl</code>.</p>
+
+<h2 id="reference">Scores and labels</h2>
+<h3 id="scores">Scores</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>Score</th><th>Level</th><th>Reads as</th></tr></thead>
+<tbody>
+<tr><td>economic_vitality_score</td><td>district</td><td>how much economic activity and formation there is: company births, employment, deposits and loans, population growth, cheque discipline</td></tr>
+<tr><td>affluence_score</td><td>district</td><td>purchasing power: earnings, deposits, cars, housing prices, consumer credit, upscale venue density</td></tr>
+<tr><td>commercial_saturation_score</td><td>district</td><td>how crowded the commercial fabric already is relative to residents; high means less room</td></tr>
+<tr><td>economic_momentum_score</td><td>district</td><td>one-year change across population, employment, credit, deposits, housing sales and car registrations</td></tr>
+<tr><td>industrial_opportunity_score</td><td>district</td><td>industrial zones, employment, earnings, and access to motorway, rail and port</td></tr>
+<tr><td>household_demand_growth_score</td><td>district</td><td>real growth of household deposits, loans, cards and population</td></tr>
+<tr><td>growth_proxy_score</td><td>district</td><td>a summary of growth from the two growth scores and population change</td></tr>
+<tr><td>financial_services_opportunity_score</td><td>district</td><td>demand for branches and services against current branch coverage</td></tr>
+<tr><td>commercial_opportunity_score</td><td>district</td><td>the headline for retail and food service: affluence and vitality against saturation, with access and transit</td></tr>
+<tr><td>gym_opportunity_score, pharmacy_opportunity_score, supermarket_opportunity_score, ev_charger_opportunity_score</td><td>district</td><td>category versions of the same idea, each with the demand drivers that matter for that category</td></tr>
+<tr><td>business_activity_growth_score</td><td>province</td><td>growth of company formation, commercial credit and deposits, merchants and POS terminals</td></tr>
+<tr><td>credit_stress_score</td><td>province</td><td>non-performing loans, protested bills, returned cheques and company churn; high means more stress</td></tr>
+</tbody></table></div>
+<p><code>/scores</code> lists the inputs of each score; <code>components</code> on a district shows the standing of each input for that district. For the full description of each score, see the <a href="https://locumetry.com/methodology">methodology</a>.</p>
+
+<h3 id="labels">Labels</h3>
+<p>Labels are rules over the same features. Each label's description is returned by <code>/labels</code>; the district count is at the time of writing.</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Label</th><th>Meaning</th><th>Districts</th></tr></thead>
+<tbody>
+<tr><td>growth_hotspot</td><td>Top-quartile overall growth proxy</td><td>244</td></tr>
+<tr><td>declining_area</td><td>Shrinking population and bottom-quartile growth</td><td>202</td></tr>
+<tr><td>industrial_hub</td><td>Active industrial zones or strong industrial concentration</td><td>179</td></tr>
+<tr><td>affluent_saturated</td><td>Wealthy and commercially crowded</td><td>167</td></tr>
+<tr><td>agri_center</td><td>Agricultural credit specialisation in a low-density district</td><td>167</td></tr>
+<tr><td>tourism_hotspot</td><td>Dense hotels/attractions or strong foreign buyer demand</td><td>115</td></tr>
+<tr><td>logistics_corridor</td><td>Dense motorway access with freight infrastructure nearby</td><td>100</td></tr>
+<tr><td>high_growth_underserved</td><td>Fast growth with below-median commercial saturation</td><td>81</td></tr>
+<tr><td>auto_dealer_cluster</td><td>Car dealerships concentrated by count and per resident</td><td>53</td></tr>
+<tr><td>youth_bulge</td><td>Very young age structure with a high birth rate</td><td>53</td></tr>
+<tr><td>transit_connected</td><td>Dense urban district with top-tier public transport stop coverage</td><td>49</td></tr>
+<tr><td>foreign_buyer_magnet</td><td>Top decile of housing sales to foreigners per resident, in a sizeable district</td><td>48</td></tr>
+<tr><td>banking_underserved</td><td>Bottom fifth of bank branches per resident, in a district of 50,000 or more</td><td>47</td></tr>
+<tr><td>hotel_resort_town</td><td>Hotels far denser and more specialised than the national mix</td><td>45</td></tr>
+<tr><td>new_venue_wave</td><td>Top 5% of commercial openings per resident over the last year</td><td>45</td></tr>
+<tr><td>shopping_destination</td><td>Several malls plus dense fashion retail</td><td>44</td></tr>
+<tr><td>fitness_and_beauty</td><td>Gyms and beauty services both in the national top decile per resident</td><td>44</td></tr>
+<tr><td>migration_magnet</td><td>Top 5% net in-migration rate, in a sizeable district</td><td>43</td></tr>
+<tr><td>high_turnover_retail</td><td>Top decile commercial churn (openings plus closures) in a commercially active district</td><td>41</td></tr>
+<tr><td>boomtown</td><td>Sizeable district in the top decile of population growth with new venues opening</td><td>40</td></tr>
+<tr><td>quiet_rural</td><td>Small, sparse, non-growing district with little commerce</td><td>39</td></tr>
+<tr><td>seaside_beach_activity</td><td>On the coast with beach or resort activity</td><td>37</td></tr>
+<tr><td>entertainment_hub</td><td>Cinemas and theatres concentrated by count and per resident, with restaurants to match</td><td>37</td></tr>
+<tr><td>residential_zone</td><td>Dense population, thin commercial fabric</td><td>36</td></tr>
+<tr><td>commuter_town</td><td>Dense, growing residential district with little local employment</td><td>36</td></tr>
+<tr><td>warehouse_zone</td><td>Several warehouses with top-decile warehouse density</td><td>36</td></tr>
+<tr><td>housing_boom</td><td>Top decile housing sales growth (a province series) with district population growth</td><td>36</td></tr>
+<tr><td>banking_center</td><td>Bank branches concentrated by count and per resident</td><td>35</td></tr>
+<tr><td>entrepreneur_hub</td><td>Company formation (province) plus dense offices and new venues opening</td><td>32</td></tr>
+<tr><td>furniture_cluster</td><td>Furniture retail concentrated by count and per resident</td><td>32</td></tr>
+<tr><td>retirement_coast</td><td>Coastal district with an old age structure</td><td>31</td></tr>
+<tr><td>pharmacy_gap</td><td>Top 5% residents per pharmacy, in a district of 30,000 or more</td><td>31</td></tr>
+<tr><td>metro_core</td><td>Top 3% population density with dense commerce and transit</td><td>30</td></tr>
+<tr><td>university_town</td><td>Universities plus a young-adult population bulge</td><td>29</td></tr>
+<tr><td>electronics_bazaar</td><td>Electronics and phone retail concentrated by count and per resident</td><td>29</td></tr>
+<tr><td>ev_ready</td><td>EV charging points concentrated by count and per resident</td><td>28</td></tr>
+<tr><td>healthcare_desert</td><td>Sizeable district in the bottom decile of hospital access</td><td>28</td></tr>
+<tr><td>healthcare_hub</td><td>Hospital cluster with dense, specialised outpatient care</td><td>27</td></tr>
+<tr><td>foodie_hotspot</td><td>Restaurant scene strong by volume, density and specialisation</td><td>26</td></tr>
+<tr><td>aging_district</td><td>Top 5% share of residents aged 65 and over</td><td>25</td></tr>
+<tr><td>nightlife_district</td><td>Bar and nightlife concentration</td><td>22</td></tr>
+<tr><td>business_district</td><td>Office concentration well above the national mix, with a working-day economy</td><td>22</td></tr>
+<tr><td>border_trade_hub</td><td>Near a border crossing with above-median business formation</td><td>20</td></tr>
+<tr><td>young_families</td><td>Kindergartens dense, births and population growth above the median</td><td>20</td></tr>
+<tr><td>cafe_culture</td><td>Cafe density and specialisation far above national norms</td><td>19</td></tr>
+<tr><td>highway_stopover</td><td>Fuel stations dense along motorway kilometres in a thinly populated district</td><td>12</td></tr>
+<tr><td>education_cluster</td><td>Dense education places with many schools</td><td>9</td></tr>
+<tr><td>coffee_shop_paradise</td><td>Top-tier cafe scene by volume, density and specialisation</td><td>4</td></tr>
+</tbody></table></div>
+
+<h2 id="errors">Errors and limits</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>Status</th><th>When</th><th>Body</th></tr></thead>
+<tbody>
+<tr><td>400</td><td>a parameter is wrong: unknown score or label, a province-level score in <code>min_score</code>, a percentile outside 0 to 100</td><td><code>{"detail": "min_score: unknown or province-level score 'foo'"}</code></td></tr>
+<tr><td>401</td><td>missing or unknown key</td><td><code>{"detail": "invalid or missing API key"}</code></td></tr>
+<tr><td>404</td><td>unknown identifier, or a province id given to a district endpoint</td><td><code>{"detail": "unknown district_id"}</code></td></tr>
+<tr><td>422</td><td>a value of the wrong type, such as <code>limit=abc</code></td><td>FastAPI's validation detail</td></tr>
+<tr><td>429</td><td>more requests this minute than your plan allows</td><td><code>{"detail": "rate limit exceeded"}</code> with a <code>Retry-After</code> header in seconds</td></tr>
+</tbody></table></div>
+<p>Data is rebuilt nightly; responses may be cached for a short time at the edge. Identifiers and field names are stable within v1; new fields may be added, existing ones are not renamed or removed without a new version.</p>
+<p class="note">Locumetry is information, not advice. The API is built to make a shortlist defensible and traceable, not to replace a visit.</p>
+</main>
+</div>
+
+<footer><div class="wrap"><span>© 2026 Locumetry · <a href="https://locumetry.com">locumetry.com</a> · <a href="https://locumetry.com/api/v1/docs">OpenAPI reference</a> · <a href="https://github.com/Locumetry-Data/locumetry">GitHub</a></span><span>hello@locumetry.com</span></div></footer>
+</body>
+</html>
