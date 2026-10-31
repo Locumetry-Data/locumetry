@@ -138,7 +138,7 @@ console.log(sincan.geo.name, sincan.labels.map(l =&gt; l.label));</code></pre>
    "age_0_14_share": {"value": 0.1784, "year": 2025, "is_estimated": true},
    ... 286 features ...},
  "scores": {
-   "affluence_score": {"score_value": 76.96, "percentile": 85.6, "rank_national": 141, "rank_region": 18,
+   "affluence_score": {"score_value": 64.1, "percentile": 73.1, "rank_national": 262, "rank_region": 16,
                        "period_date": "2026-01-01", "level": "district",
                        "components": {"avg_daily_earning": 0.975, "cars_per_1000": 0.988, "gdp_per_capita_usd": 0.935, ...}},
    ... 15 scores ...},
@@ -147,7 +147,7 @@ console.log(sincan.geo.name, sincan.labels.map(l =&gt; l.label));</code></pre>
     "description": "Dense, growing residential district with little local employment",
     "evidence": {"population_density": 701.562, "workplaces_per_1000": 18.524, "population_growth_3y": 0.019, ...}},
    ...]}</code></pre>
-<p><code>components</code> gives the standing of each input on a 0 to 1 scale, so you can see what carried a score. The weights that combine them are not published; the <a href="https://locumetry.com/methodology">methodology</a> explains what each score is for and how to read it.</p>
+<p><code>components</code> gives the standing of each input on a 0 to 1 scale, so you can see what carried a score. The weights that combine them are not published; the <a href="https://locumetry.com/methodology">methodology</a> explains what each score is for and how to read it. An input that is a province statistic allocated to the district (an estimate) counts a quarter of a measured one.</p>
 </section>
 
 <section class="endpoint" id="ep-history">
@@ -210,17 +210,17 @@ console.log(sincan.geo.name, sincan.labels.map(l =&gt; l.label));</code></pre>
 <dt><code>limit</code></dt><dd>1 to 1000, default 100</dd>
 </dl>
 <pre><code>GET /screen?min_score=affluence_score:75&amp;min_score=economic_momentum_score:60
-           &amp;max_score=commercial_saturation_score:50&amp;sort=commercial_opportunity_score
+           &amp;max_score=commercial_saturation_score:60&amp;sort=commercial_opportunity_score
 
-[{"geo_id": "TR_06_1747", "name": "Sincan", "province": "Ankara", "population": 605366.0,
-  "labels": ["commuter_town", "growth_hotspot", "high_growth_underserved", "industrial_hub", "residential_zone"],
-  "scores": {"commercial_opportunity_score": {"value": 84.9, "percentile": 100, "rank": 1},
-             "affluence_score": {"value": 77.0, "percentile": 85.6, "rank": 141},
-             "economic_momentum_score": {"value": 60.7, "percentile": 82.9, "rank": 167},
-             "commercial_saturation_score": {"value": 42.3, "percentile": 38.8, "rank": 596}}},
- {"geo_id": "TR_06_1746", "name": "Mamak", "province": "Ankara", "population": 690329.0, ...},
- {"geo_id": "TR_41_2061", "name": "Dilovası", "province": "Kocaeli", "population": 55355.0, ...},
- ... 9 districts in all ...]</code></pre>
+[{"geo_id": "TR_41_2059", "name": "Çayırova", "province": "Kocaeli", "population": 162262.0,
+  "labels": ["growth_hotspot", "industrial_hub", "logistics_corridor", "transit_connected", "warehouse_zone"],
+  "scores": {"commercial_opportunity_score": {"value": 84.0, "percentile": 99.9, "rank": 2},
+             "affluence_score": {"value": 74.2, "percentile": 84.6, "rank": 151},
+             "economic_momentum_score": {"value": 60.0, "percentile": 83.5, "rank": 161},
+             "commercial_saturation_score": {"value": 52.3, "percentile": 53.3, "rank": 455}}},
+ {"geo_id": "TR_34_2048", "name": "Arnavutköy", "province": "İstanbul", "population": 358469.0, ...},
+ {"geo_id": "TR_34_2014", "name": "Sultanbeyli", "province": "İstanbul", "population": 378908.0, ...},
+ ... 7 districts in all ...]</code></pre>
 <p>Only the scores named in the request plus the sort score are returned per row, so the result stays small. An empty list is a valid answer: the thresholds were too strict for that region.</p>
 </section>
 
@@ -231,9 +231,9 @@ console.log(sincan.geo.name, sincan.labels.map(l =&gt; l.label));</code></pre>
 <pre><code>GET /rankings?score=commercial_opportunity_score&amp;region=TR3&amp;limit=3
 
 [{"geo_id": "TR_35_1521", "name": "Menemen", "level": "district", "province": "İzmir",
-  "score_value": 76.81, "percentile": 96.6, "rank_national": 34, "rank_region": 1, "components": {...}},
- {"geo_id": "TR_35_1682", "name": "Torbalı", ..., "rank_national": 36, "rank_region": 2},
- {"geo_id": "TR_35_1128", "name": "Aliağa", ..., "rank_national": 43, "rank_region": 3}]</code></pre>
+  "score_value": 79.17, "percentile": 98.0, "rank_national": 20, "rank_region": 1, "components": {...}},
+ {"geo_id": "TR_35_1682", "name": "Torbalı", ..., "rank_national": 30, "rank_region": 2},
+ {"geo_id": "TR_35_1128", "name": "Aliağa", ..., "rank_national": 33, "rank_region": 3}]</code></pre>
 </section>
 
 <section class="endpoint" id="ep-features">
@@ -252,8 +252,8 @@ console.log(sincan.geo.name, sincan.labels.map(l =&gt; l.label));</code></pre>
 <dl><dt><code>geo_id</code></dt><dd>required</dd><dt><code>score</code></dt><dd>list; restrict to these scores</dd></dl>
 <pre><code>GET /scores/history?geo_id=TR_06_1747&amp;score=affluence_score
 
-{"affluence_score": [..., {"year": 2025, "score_value": 88.04, "percentile": 93.3, "rank_national": 66, "rank_region": 15},
-                          {"year": 2026, "score_value": 76.96, "percentile": 85.6, "rank_national": 141, "rank_region": 18}]}</code></pre>
+{"affluence_score": [..., {"year": 2025, "score_value": 84.98, "percentile": 91.5, "rank_national": 84, "rank_region": 10},
+                          {"year": 2026, "score_value": 64.1, "percentile": 73.1, "rank_national": 262, "rank_region": 16}]}</code></pre>
 </section>
 
 <section class="endpoint" id="ep-labels">
@@ -263,14 +263,15 @@ console.log(sincan.geo.name, sincan.labels.map(l =&gt; l.label));</code></pre>
 <pre><code>GET /labels
 
 [{"label": "growth_hotspot", "description": "Top-quartile overall growth proxy", "districts": 244},
- {"label": "high_growth_underserved", "description": "Fast growth with below-median commercial saturation", "districts": 81},
+ {"label": "high_growth_underserved", "description": "Fast growth with below-median commercial saturation", "districts": 69},
  ... 48 labels ...]
 
 GET /labels/high_growth_underserved?province=TR_06
 
 [{"geo_id": "TR_06_1187", "name": "Beypazarı", "province": "Ankara",
-  "evidence": {"growth_proxy_score": 76.907, "commercial_saturation_score": 46.11}},
- {"geo_id": "TR_06_1747", "name": "Sincan", "province": "Ankara", "evidence": {...}}, ...]</code></pre>
+  "evidence": {"growth_proxy_score": 75.609, "commercial_saturation_score": 46.11}},
+ {"geo_id": "TR_06_1260", "name": "Çubuk", "province": "Ankara",
+  "evidence": {"growth_proxy_score": 87.963, "commercial_saturation_score": 39.211}}, ...]</code></pre>
 </section>
 
 <section class="endpoint" id="ep-catalog">
@@ -337,7 +338,7 @@ GET /health
 <p>"Affluent, gaining momentum, not yet commercially saturated, with at least 100,000 residents." Thresholds are national percentiles; start loose and tighten.</p>
 <pre><code>hits = api.get(f"{BASE}/screen", params={
     "min_score": ["affluence_score:75", "economic_momentum_score:60"],
-    "max_score": ["commercial_saturation_score:50"],
+    "max_score": ["commercial_saturation_score:60"],
     "min_population": 100000,
     "sort": "commercial_opportunity_score",
     "limit": 25,
@@ -346,7 +347,7 @@ for d in hits:
     s = d["scores"]
     print(f'{d["name"]:<14} {d["province"]:<10} opp {s["commercial_opportunity_score"]["percentile"]:5.1f}'
           f'  afflu {s["affluence_score"]["percentile"]:5.1f}  satur {s["commercial_saturation_score"]["percentile"]:5.1f}')</code></pre>
-<p>Labels make the same question shorter: <code>label=high_growth_underserved&amp;min_population=100000</code> returns the districts that are growing fast with below-median saturation, 19 of them at the time of writing, Sincan first.</p>
+<p>Labels make the same question shorter: <code>label=high_growth_underserved&amp;min_population=100000</code> returns the districts that are growing fast with below-median saturation, 23 of them at the time of writing, Sincan first.</p>
 
 <h3 id="r-compare">Compare a shortlist</h3>
 <pre><code>ids = ["TR_06_1747", "TR_35_1521", "TR_41_2061"]
@@ -397,7 +398,7 @@ with open("economic_vitality.csv", "w", newline="") as f:
 <tr><td>household_demand_growth_score</td><td>district</td><td>real growth of household deposits, loans, cards and population</td></tr>
 <tr><td>growth_proxy_score</td><td>district</td><td>a summary of growth from the two growth scores and population change</td></tr>
 <tr><td>financial_services_opportunity_score</td><td>district</td><td>demand for branches and services against current branch coverage</td></tr>
-<tr><td>commercial_opportunity_score</td><td>district</td><td>the headline for retail and food service: affluence and vitality against saturation, with access and transit</td></tr>
+<tr><td>commercial_opportunity_score</td><td>district</td><td>underserved demand, the headline volume reading: many, dense and growing residents, affluence and vitality, against the shops already there; not spending power on its own, so read it next to affluence</td></tr>
 <tr><td>gym_opportunity_score, pharmacy_opportunity_score, supermarket_opportunity_score, ev_charger_opportunity_score</td><td>district</td><td>category versions of the same idea, each with the demand drivers that matter for that category</td></tr>
 <tr><td>business_activity_growth_score</td><td>province</td><td>growth of company formation, commercial credit and deposits, merchants and POS terminals</td></tr>
 <tr><td>credit_stress_score</td><td>province</td><td>non-performing loans, protested bills, returned cheques and company churn; high means more stress</td></tr>
@@ -410,13 +411,13 @@ with open("economic_vitality.csv", "w", newline="") as f:
 <thead><tr><th>Label</th><th>Meaning</th><th>Districts</th></tr></thead>
 <tbody>
 <tr><td>growth_hotspot</td><td>Top-quartile overall growth proxy</td><td>244</td></tr>
-<tr><td>declining_area</td><td>Shrinking population and bottom-quartile growth</td><td>202</td></tr>
+<tr><td>declining_area</td><td>Shrinking population and bottom-quartile growth</td><td>212</td></tr>
+<tr><td>affluent_saturated</td><td>Wealthy and commercially crowded</td><td>193</td></tr>
 <tr><td>industrial_hub</td><td>Active industrial zones or strong industrial concentration</td><td>179</td></tr>
-<tr><td>affluent_saturated</td><td>Wealthy and commercially crowded</td><td>167</td></tr>
 <tr><td>agri_center</td><td>Agricultural credit specialisation in a low-density district</td><td>167</td></tr>
 <tr><td>tourism_hotspot</td><td>Dense hotels/attractions or strong foreign buyer demand</td><td>115</td></tr>
 <tr><td>logistics_corridor</td><td>Dense motorway access with freight infrastructure nearby</td><td>100</td></tr>
-<tr><td>high_growth_underserved</td><td>Fast growth with below-median commercial saturation</td><td>81</td></tr>
+<tr><td>high_growth_underserved</td><td>Fast growth with below-median commercial saturation</td><td>69</td></tr>
 <tr><td>auto_dealer_cluster</td><td>Car dealerships concentrated by count and per resident</td><td>53</td></tr>
 <tr><td>youth_bulge</td><td>Very young age structure with a high birth rate</td><td>53</td></tr>
 <tr><td>transit_connected</td><td>Dense urban district with top-tier public transport stop coverage</td><td>49</td></tr>

@@ -20,7 +20,7 @@ console.log("labels:", sincan.labels.map((l) => l.label).join(", "));
 
 const hits = await get("/screen", {
   min_score: ["affluence_score:75", "economic_momentum_score:60"],
-  max_score: ["commercial_saturation_score:50"],
+  max_score: ["commercial_saturation_score:60"],
   min_population: 100000,
   sort: "commercial_opportunity_score",
   limit: 10,

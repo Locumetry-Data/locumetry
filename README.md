@@ -18,7 +18,8 @@ report problems. The service itself runs at [locumetry.com](https://locumetry.co
   business openings and closures, credit, tourism, industry, housing, and the places on the ground (shops,
   cafés, clinics, gyms, schools, transport), each with its period and source.
 - **Scores.** Economic vitality, affluence, commercial saturation, economic momentum, industrial opportunity,
-  household demand growth, financial services opportunity and commercial opportunity, plus category
+  household demand growth, financial services opportunity and underserved demand (`commercial_opportunity_score`,
+  a volume reading: many, dense and growing residents against few shops per resident), plus category
   opportunity scores for gyms, pharmacies, supermarkets and EV chargers. Every score is published as a national
   percentile and rank, with the measured features behind it.
 - **Labels.** Plain-language flags such as growing, affluent or underserved in a category, derived from the
@@ -40,7 +41,8 @@ market researchers and analysts who need Turkish regional data in one consistent
 2. **Align.** Everything is keyed to one geography: `TR_34` is a province (plate code), `TR_34_1421` a district
    (TÜİK code), `TR_34_1421_<id>` a neighbourhood. Names are matched Turkish-aware and never used as keys.
 3. **Measure.** Features are computed only where the source actually measures that geography. Values that had
-   to be allocated or modelled are flagged as estimates and shown as such.
+   to be allocated or modelled are flagged as estimates and shown as such, and they enter a score at a quarter of
+   the weight of a measured value, so a district never inherits its province's wealth wholesale.
 4. **Score.** Features are combined into scores and expressed as national percentiles, so a 90 means "higher
    than 90 percent of districts". The methodology page explains what goes into each score and how to read it.
 5. **Publish.** The site, the comparison and screening tools, the reports and the API read from the same
@@ -86,15 +88,15 @@ api.headers["X-API-Key"] = "your key"
 # Affluent, gaining momentum, not yet saturated, at least 100,000 residents; thresholds are national percentiles
 hits = api.get("https://locumetry.com/api/v1/screen", params={
     "min_score": ["affluence_score:75", "economic_momentum_score:60"],
-    "max_score": ["commercial_saturation_score:50"],
+    "max_score": ["commercial_saturation_score:60"],
     "min_population": 100000,
     "sort": "commercial_opportunity_score",
     "limit": 10,
 }).json()
 for row in hits:
     print(row["geo_id"], row["name"], row["province"], row["scores"]["commercial_opportunity_score"]["percentile"])
-# TR_06_1747 Sincan Ankara 100
-# TR_06_1746 Mamak Ankara 98.8
+# TR_41_2059 Çayırova Kocaeli 99.9
+# TR_34_2048 Arnavutköy İstanbul 99.6
 # ...
 ```
 
