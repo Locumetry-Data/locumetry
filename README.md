@@ -27,6 +27,8 @@ report problems. The service itself runs at [locumetry.com](https://locumetry.co
 - **Comparison and screening.** Put districts side by side, or ask for every district that is, say, above the
   75th percentile on affluence, gaining momentum and not yet saturated, in a region of your choice.
 - **History.** Scores and features over time, so a district can be judged on its trajectory, not a snapshot.
+- **Readings.** A short generated summary on every district and province page, in English and Turkish, written
+  from that place's own numbers and checked against them before it is shown. Rewritten only when the numbers change.
 - **An API.** Everything above as JSON, keyed by stable district identifiers, for your own models, maps and
   reports.
 
@@ -103,7 +105,7 @@ for row in hits:
 | Endpoint | Returns |
 |---|---|
 | `/districts`, `/provinces` | the geography, filterable by province or name |
-| `/districts/{geo_id}` | one district: latest scores with their inputs, labels with evidence, every measured feature |
+| `/districts/{geo_id}` | one district: latest scores with their inputs, labels with evidence, every measured feature, the generated reading |
 | `/districts/{geo_id}/history` | a district's features by year |
 | `/districts/{geo_id}/observations` | the publisher's raw numbers behind the features, with period, unit and source |
 | `/districts/{geo_id}/similar` | the districts that look most like it, and where they differ |

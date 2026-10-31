@@ -146,7 +146,11 @@ console.log(sincan.geo.name, sincan.labels.map(l =&gt; l.label));</code></pre>
    {"label": "commuter_town",
     "description": "Dense, growing residential district with little local employment",
     "evidence": {"population_density": 701.562, "workplaces_per_1000": 18.524, "population_growth_3y": 0.019, ...}},
-   ...]}</code></pre>
+   ...],
+ "reading": {"en": "Sincan is a district in Ankara with a population of 605,366. Its affluence score decreased by 18.3 over the last year, while its growth proxy score is in the 99th percentile. ...",
+             "tr": "Sincan, Ankara'da 605.366 nüfuslu bir ilçedir. ...",
+             "data_as_of": "2026-10-30", "generated_at": "2026-10-31T13:58:02Z"}}</code></pre>
+<p><code>reading</code> is a generated summary, three to five sentences in English and Turkish, written by a language model from this place's own numbers only. Every number and place name in it is checked against the data before it is stored, and it is rewritten only when the numbers behind it change; <code>data_as_of</code> is the date of the data it describes. It is <code>null</code> when no reading has passed the checks yet. Province detail carries the same field.</p>
 <p><code>components</code> gives the standing of each input on a 0 to 1 scale, so you can see what carried a score. The weights that combine them are not published; the <a href="https://locumetry.com/methodology">methodology</a> explains what each score is for and how to read it. An input that is a province statistic allocated to the district (an estimate) counts a quarter of a measured one.</p>
 </section>
 
