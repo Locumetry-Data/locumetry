@@ -90,7 +90,7 @@ print(sincan["geo"]["name"], sincan["scores"]["affluence_score"]["percentile"])<
 });
 const sincan = await res.json();
 console.log(sincan.geo.name, sincan.labels.map(l =&gt; l.label));</code></pre>
-<p>Keys come with a plan from the <a href="https://locumetry.com/pricing">pricing page</a>; for an evaluation key write to <a href="mailto:hello@locumetry.com">hello@locumetry.com</a>. Runnable versions of everything on this page are in the <a href="https://github.com/Locumetry-Data/locumetry/tree/main/examples">examples folder</a>.</p>
+<p>Get a sandbox key instantly at <a href="https://locumetry.com/partners#sandbox">locumetry.com/partners#sandbox</a>: 20 requests a minute, 500 a day, valid for 14 days, every endpoint. Production keys come with a plan from the <a href="https://locumetry.com/pricing">pricing page</a>. Runnable versions of everything on this page are in the <a href="https://github.com/Locumetry-Data/locumetry/tree/main/examples">examples folder</a>.</p>
 
 <h2 id="auth">Authentication</h2>
 <p>The key goes in the header only. A key in the URL would end up in access logs, so query-string keys are not accepted. A missing or unknown key answers <code>401</code>; more requests per minute than your plan allows answers <code>429</code> with a <code>Retry-After</code> header saying how many seconds to wait. Each key is metered per day and route, and you can read your own meter at <a href="#ep-usage"><code>/usage</code></a>.</p>
@@ -472,7 +472,7 @@ with open("economic_vitality.csv", "w", newline="") as f:
 <tr><td>401</td><td>missing or unknown key</td><td><code>{"detail": "invalid or missing API key"}</code></td></tr>
 <tr><td>404</td><td>unknown identifier, or a province id given to a district endpoint</td><td><code>{"detail": "unknown district_id"}</code></td></tr>
 <tr><td>422</td><td>a value of the wrong type, such as <code>limit=abc</code></td><td>FastAPI's validation detail</td></tr>
-<tr><td>429</td><td>more requests this minute than your plan allows</td><td><code>{"detail": "rate limit exceeded"}</code> with a <code>Retry-After</code> header in seconds</td></tr>
+<tr><td>429</td><td>more requests this minute than your plan allows, or a sandbox key past its daily cap</td><td><code>{"detail": "rate limit exceeded"}</code> with a <code>Retry-After</code> header in seconds; <code>{"detail": "daily cap of 500 requests reached ..."}</code> for a sandbox key</td></tr>
 </tbody></table></div>
 <p>Data is rebuilt nightly; responses may be cached for a short time at the edge. Identifiers and field names are stable within v1; new fields may be added, existing ones are not renamed or removed without a new version.</p>
 <p class="note">Locumetry is information, not advice. The API is built to make a shortlist defensible and traceable, not to replace a visit.</p>

@@ -75,8 +75,9 @@ snapshot is kept with its date, so openings and closures can be followed over ti
 
 ## Using the API
 
-Every request carries your key in the `X-API-Key` header. Keys are issued with a plan from the
-[pricing page](https://locumetry.com/pricing); write to hello@locumetry.com for an evaluation key.
+Every request carries your key in the `X-API-Key` header. Get a sandbox key instantly at
+[locumetry.com/partners#sandbox](https://locumetry.com/partners#sandbox): 20 requests a minute, 500 a day, valid for
+14 days, every endpoint. Production keys come with a plan from the [pricing page](https://locumetry.com/pricing).
 
 ```bash
 curl -s https://locumetry.com/api/v1/districts/TR_06_1747 -H "X-API-Key: $LOCUMETRY_API_KEY"
