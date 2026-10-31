@@ -30,6 +30,8 @@ report problems. The service itself runs at [locumetry.com](https://locumetry.co
 - **History.** Scores and features over time, so a district can be judged on its trajectory, not a snapshot.
 - **Readings.** A short generated summary on every district and province page, in English and Turkish, written
   from that place's own numbers and checked against them before it is shown. Rewritten only when the numbers change.
+- **Exports and reports.** Any comparison downloads as a standalone HTML page (print it to PDF) or CSV. The paid
+  district report is shown in full as a [public sample](https://locumetry.com/sample-report), with its JSON.
 - **An API.** Everything above as JSON, keyed by stable district identifiers, for your own models, maps and
   reports.
 
