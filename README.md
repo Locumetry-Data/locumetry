@@ -25,7 +25,8 @@ report problems. The service itself runs at [locumetry.com](https://locumetry.co
 - **Labels.** Plain-language flags such as growing, affluent or underserved in a category, derived from the
   same features by fixed rules.
 - **Comparison and screening.** Put districts side by side, or ask for every district that is, say, above the
-  75th percentile on affluence, gaining momentum and not yet saturated, in a region of your choice.
+  75th percentile on affluence, gaining momentum and not yet saturated, in a region of your choice. Nine curated
+  comparisons (İstanbul's two sides, Ankara, İzmir, the coasts, the Kocaeli industrial belt) are kept current nightly.
 - **History.** Scores and features over time, so a district can be judged on its trajectory, not a snapshot.
 - **Readings.** A short generated summary on every district and province page, in English and Turkish, written
   from that place's own numbers and checked against them before it is shown. Rewritten only when the numbers change.
