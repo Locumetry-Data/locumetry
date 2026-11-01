@@ -67,6 +67,7 @@ The methodology is described in full at [locumetry.com/methodology](https://locu
 | TOBB | companies founded and closed; industrial capacity | province | monthly, yearly |
 | KTB | licensed tourism facilities and beds | province | monthly |
 | OSBÜK | organised industrial zones | district | snapshot |
+| GHSL (European Commission JRC) | built-up surface and building volume, 1975 to 2020 in five-year epochs | district | static |
 | geoBoundaries | province and district boundaries | province, district | static |
 | OpenStreetMap | places, infrastructure, roads and rail | point | monthly |
 | Overture Maps | places | point | monthly |
