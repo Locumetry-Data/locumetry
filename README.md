@@ -68,6 +68,7 @@ The methodology is described in full at [locumetry.com/methodology](https://locu
 | KTB | licensed tourism facilities and beds | province | monthly |
 | OSBÜK | organised industrial zones | district | snapshot |
 | GHSL (European Commission JRC) | built-up surface and building volume, 1975 to 2020 in five-year epochs | district | static |
+| NASA Black Marble | night-time light radiance, annual composites since 2012 and monthly since 2024 | district | monthly |
 | geoBoundaries | province and district boundaries | province, district | static |
 | OpenStreetMap | places, infrastructure, roads and rail | point | monthly |
 | Overture Maps | places | point | monthly |
