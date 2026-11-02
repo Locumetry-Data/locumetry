@@ -59,7 +59,7 @@ The methodology is described in full at [locumetry.com/methodology](https://locu
 
 | Source | What | Level | Cadence |
 |---|---|---|---|
-| TÜİK | population, age groups, GDP, vehicles, marriages, housing sales, neighbourhood population | district, province, neighbourhood | yearly, some monthly |
+| TÜİK | population, age groups, GDP, vehicles, marriages, housing sales (monthly by district since 2013), neighbourhood population | district, province, neighbourhood | yearly, some monthly |
 | BDDK FinTürk | deposits, loans, non-performing loans, branches, by bank group | province | quarterly |
 | TBB | bank branches and ATMs | province | yearly |
 | TCMB EVDS | macro series, housing price index, policy rate | national, NUTS2 | daily to monthly |
