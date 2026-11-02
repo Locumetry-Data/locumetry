@@ -14,8 +14,9 @@ report problems. The service itself runs at [locumetry.com](https://locumetry.co
 
 ## What you get
 
-- **District and province profiles.** Population and its change, age structure, income proxies, employment,
-  business openings and closures, credit, tourism, industry, housing, and the places on the ground (shops,
+- **District and province profiles.** Population and its change, age structure, education, income proxies,
+  employment, business openings and closures, credit, tourism, industry, monthly housing sales by district, the
+  built-up footprint and night-time light of each district from satellite data, and the places on the ground (shops,
   cafés, clinics, gyms, schools, transport), each with its period and source.
 - **Scores.** Economic vitality, affluence, commercial saturation, economic momentum, industrial opportunity,
   household demand growth, financial services opportunity and underserved demand (`commercial_opportunity_score`,
@@ -27,7 +28,10 @@ report problems. The service itself runs at [locumetry.com](https://locumetry.co
 - **Comparison and screening.** Put districts side by side, or ask for every district that is, say, above the
   75th percentile on affluence, gaining momentum and not yet saturated, in a region of your choice. Nine curated
   comparisons (İstanbul's two sides, Ankara, İzmir, the coasts, the Kocaeli industrial belt) are kept current nightly.
-- **History.** Scores and features over time, so a district can be judged on its trajectory, not a snapshot.
+- **History and change.** Scores and features over time, so a district can be judged on its trajectory, not a
+  snapshot. Every score carries its move since last year, and every series measured for the district (population,
+  age structure, education, housing sales, night-time lights, built-up area) its change over one, five and ten years,
+  ranked against all other districts. The same for a province's own series, in today's prices.
 - **Readings.** A short generated summary on every district and province page, in English and Turkish, written
   from that place's own numbers and checked against them before it is shown. Rewritten only when the numbers change.
 - **Exports and reports.** Any comparison downloads as a standalone HTML page (print it to PDF) or CSV. The paid
@@ -59,7 +63,7 @@ The methodology is described in full at [locumetry.com/methodology](https://locu
 
 | Source | What | Level | Cadence |
 |---|---|---|---|
-| TÜİK | population, age groups, GDP, vehicles, marriages, housing sales (monthly by district since 2013), neighbourhood population | district, province, neighbourhood | yearly, some monthly |
+| TÜİK | population by age band, education level and household size for every district (yearly since 2007), housing sales (monthly by district since 2013), births, marriages, GDP, vehicles, neighbourhood population | district, province, neighbourhood | yearly, some monthly |
 | BDDK FinTürk | deposits, loans, non-performing loans, branches, by bank group | province | quarterly |
 | TBB | bank branches and ATMs | province | yearly |
 | TCMB EVDS | macro series, housing price index, policy rate | national, NUTS2 | daily to monthly |
@@ -79,9 +83,9 @@ snapshot is kept with its date, so openings and closures can be followed over ti
 
 ## Using the API
 
-Every request carries your key in the `X-API-Key` header. Get an evaluation (sandbox) key instantly at
-[locumetry.com/partners#sandbox](https://locumetry.com/partners#sandbox): 20 requests a minute, 500 a day, valid for
-14 days, every endpoint. Production keys come with an enterprise agreement; see the [plans page](https://locumetry.com/pricing).
+Every request carries your key in the `X-API-Key` header. Keys are issued per organisation under an agreement,
+with a technical trial arranged as part of it; see the [partners page](https://locumetry.com/partners) and the
+[plans page](https://locumetry.com/pricing).
 
 ```bash
 curl -s https://locumetry.com/api/v1/districts/TR_06_1747 -H "X-API-Key: $LOCUMETRY_API_KEY"
@@ -111,8 +115,9 @@ for row in hits:
 | Endpoint | Returns |
 |---|---|
 | `/districts`, `/provinces` | the geography, filterable by province or name |
-| `/districts/{geo_id}` | one district: latest scores with their inputs, labels with evidence, every measured feature, the generated reading |
+| `/districts/{geo_id}` | one district: latest scores with their inputs and their move since last year, labels with evidence, every measured feature, the generated reading |
 | `/districts/{geo_id}/history` | a district's features by year |
+| `/districts/{geo_id}/trends`, `/provinces/{geo_id}/trends` | each measured series with its change over one, five and ten years, and where the five-year change ranks nationally |
 | `/districts/{geo_id}/observations` | the publisher's raw numbers behind the features, with period, unit and source |
 | `/districts/{geo_id}/similar` | the districts that look most like it, and where they differ |
 | `/screen` | districts matching label and percentile conditions, sorted by a score |

@@ -55,9 +55,9 @@ footer{border-top:1px solid var(--line);padding:28px 0;color:var(--muted);font-s
 <section class="hero"><div class="wrap">
 <span class="eyebrow">Locumetry API · v1</span>
 <h1>District intelligence for Türkiye, as JSON.</h1>
-<p class="lead">Scores, labels, measured features and history for all 973 districts and 81 provinces, behind one key and one header. This guide shows every endpoint with real responses and the recipes most people start from.</p>
+<p class="lead">Scores, labels, measured features, history and ranked change for all 973 districts and 81 provinces, behind one key and one header. This guide shows every endpoint with a real response and the recipes most people start from.</p>
 <div class="btns"><a class="btn primary" href="#start">Start in two minutes</a><a class="btn" href="https://locumetry.com/api/v1/docs">Interactive reference</a><a class="btn" href="https://github.com/Locumetry-Data/locumetry/tree/main/examples">Examples on GitHub</a></div>
-<div class="stats"><div class="stat"><strong>973 · 81</strong><span>districts and provinces, one boundary set</span></div><div class="stat"><strong>287</strong><span>features per district, each with period and source</span></div><div class="stat"><strong>15 · 48</strong><span>scores and labels, with the evidence behind them</span></div><div class="stat"><strong>2000 →</strong><span>history for the main series</span></div></div>
+<div class="stats"><div class="stat"><strong>973 · 81</strong><span>districts and provinces, one boundary set</span></div><div class="stat"><strong>303</strong><span>features per district, each with period and source</span></div><div class="stat"><strong>15 · 48</strong><span>scores and labels, with the evidence behind them</span></div><div class="stat"><strong>2000 →</strong><span>history for the main series</span></div></div>
 </div></section>
 
 <div class="wrap layout">
@@ -65,7 +65,7 @@ footer{border-top:1px solid var(--line);padding:28px 0;color:var(--muted);font-s
 <p class="h">Guide</p>
 <a href="#start">Start</a><a href="#auth">Authentication</a><a href="#ids">Identifiers</a><a href="#reading">Reading the numbers</a>
 <p class="h">Endpoints</p>
-<a href="#ep-districts">/districts</a><a href="#ep-district">/districts/{geo_id}</a><a href="#ep-history">…/history</a><a href="#ep-observations">…/observations</a><a href="#ep-similar">…/similar</a><a href="#ep-provinces">/provinces</a><a href="#ep-screen">/screen</a><a href="#ep-rankings">/rankings</a><a href="#ep-features">/features</a><a href="#ep-scores-history">/scores/history</a><a href="#ep-labels">/labels</a><a href="#ep-catalog">catalogues</a><a href="#ep-neighborhoods">/neighborhoods</a><a href="#ep-h3">/h3</a><a href="#ep-usage">/usage, /health</a>
+<a href="#ep-districts">/districts</a><a href="#ep-district">/districts/{geo_id}</a><a href="#ep-history">…/history</a><a href="#ep-trends">…/trends</a><a href="#ep-observations">…/observations</a><a href="#ep-similar">…/similar</a><a href="#ep-provinces">/provinces</a><a href="#ep-screen">/screen</a><a href="#ep-rankings">/rankings</a><a href="#ep-features">/features</a><a href="#ep-scores-history">/scores/history</a><a href="#ep-labels">/labels</a><a href="#ep-catalog">catalogues</a><a href="#ep-neighborhoods">/neighborhoods</a><a href="#ep-h3">/h3</a><a href="#ep-usage">/usage, /health</a>
 <p class="h">Recipes</p>
 <a href="#r-screen">Site-selection screen</a><a href="#r-compare">Compare a shortlist</a><a href="#r-track">Track a district</a><a href="#r-lookalike">Find lookalikes</a><a href="#r-csv">Export to CSV</a>
 <p class="h">Reference</p>
@@ -90,7 +90,7 @@ print(sincan["geo"]["name"], sincan["scores"]["affluence_score"]["percentile"])<
 });
 const sincan = await res.json();
 console.log(sincan.geo.name, sincan.labels.map(l =&gt; l.label));</code></pre>
-<p>Get an evaluation (sandbox) key instantly at <a href="https://locumetry.com/partners#sandbox">locumetry.com/partners#sandbox</a>: 20 requests a minute, 500 a day, valid for 14 days, every endpoint. Production keys come with an enterprise agreement; see the <a href="https://locumetry.com/pricing">plans page</a>. Runnable versions of everything on this page are in the <a href="https://github.com/Locumetry-Data/locumetry/tree/main/examples">examples folder</a>.</p>
+<p>Keys are issued per organisation under an agreement, with a technical trial arranged as part of it; see the <a href="https://locumetry.com/partners">partners page</a> and the <a href="https://locumetry.com/pricing">plans page</a>. Runnable versions of everything on this page are in the <a href="https://github.com/Locumetry-Data/locumetry/tree/main/examples">examples folder</a>.</p>
 
 <h2 id="auth">Authentication</h2>
 <p>The key goes in the header only. A key in the URL would end up in access logs, so query-string keys are not accepted. A missing or unknown key answers <code>401</code>; more requests per minute than your plan allows answers <code>429</code> with a <code>Retry-After</code> header saying how many seconds to wait. Each key is metered per day and route, and you can read your own meter at <a href="#ep-usage"><code>/usage</code></a>.</p>
@@ -110,6 +110,7 @@ console.log(sincan.geo.name, sincan.labels.map(l =&gt; l.label));</code></pre>
 <div class="card"><h3>Scores are percentiles</h3><p><code>percentile</code> is the district's standing among all districts (or among provinces for the two province-level scores): 90 means higher than 90 percent of them. <code>score_value</code> is the underlying 0–100 value, <code>rank_national</code> and <code>rank_region</code> the positions.</p></div>
 <div class="card"><h3>Features carry a period</h3><p>Every feature value comes with the year it describes; observations carry the exact <code>period_date</code> (first day of the year, quarter or month) and the <code>source_id</code>.</p></div>
 <div class="card"><h3>Estimates are flagged</h3><p><code>is_estimated: true</code> marks a value that was allocated from a provincial or national figure rather than measured for that district. Treat it as context, not as a fact about the district.</p></div>
+<div class="card"><h3>Change is ranked too</h3><p>Every score carries <code>change_1y</code>, its move in national percentile points since last year, and <a href="#ep-trends"><code>/trends</code></a> gives each measured series with its change over one, five and ten years and where that change stands among all districts.</p></div>
 </div>
 
 <h2 id="endpoints">Endpoints</h2>
@@ -129,17 +130,17 @@ console.log(sincan.geo.name, sincan.labels.map(l =&gt; l.label));</code></pre>
 
 <section class="endpoint" id="ep-district">
 <div class="sig"><span class="method">GET</span><span class="path">/districts/{geo_id}</span></div>
-<p class="what">One district in full: the geography, the latest value of every feature, every score with its inputs, and the labels with the evidence that fired them. Province-level scores are inherited from the district's province and marked <code>"level": "province"</code>.</p>
+<p class="what">One district in full: the geography, the latest value of every feature, every score with its inputs and its move since last year, and the labels with the evidence that fired them. Province-level scores are inherited from the district's province and marked <code>"level": "province"</code>.</p>
 <pre><code>GET /districts/TR_06_1747
 
 {"geo": {"geo_id": "TR_06_1747", "name": "Sincan", "parent_geo_id": "TR_06", "region_code": "TR5", ...},
  "features": {
    "population": {"value": 605366.0, "year": 2025, "is_estimated": false},
    "age_0_14_share": {"value": 0.1784, "year": 2025, "is_estimated": true},
-   ... 286 features ...},
+   ... 302 features ...},
  "scores": {
    "affluence_score": {"score_value": 64.1, "percentile": 73.1, "rank_national": 262, "rank_region": 16,
-                       "period_date": "2026-01-01", "level": "district",
+                       "period_date": "2026-01-01", "level": "district", "change_1y": -18.0,
                        "components": {"avg_daily_earning": 0.975, "cars_per_1000": 0.988, "gdp_per_capita_usd": 0.935, ...}},
    ... 15 scores ...},
  "labels": [
@@ -151,18 +152,35 @@ console.log(sincan.geo.name, sincan.labels.map(l =&gt; l.label));</code></pre>
              "tr": "Sincan, Ankara'da 605.366 nüfuslu bir ilçedir. ...",
              "data_as_of": "2026-10-30", "generated_at": "2026-10-31T13:58:02Z"}}</code></pre>
 <p><code>reading</code> is a generated summary, three to five sentences in English and Turkish, written by a language model from this place's own numbers only. Every number and place name in it is checked against the data before it is stored, and it is rewritten only when the numbers behind it change; <code>data_as_of</code> is the date of the data it describes. It is <code>null</code> when no reading has passed the checks yet. Province detail carries the same field.</p>
-<p><code>components</code> gives the standing of each input on a 0 to 1 scale, so you can see what carried a score. The weights that combine them are not published; the <a href="https://locumetry.com/methodology">methodology</a> explains what each score is for and how to read it. An input that is a province statistic allocated to the district (an estimate) counts a quarter of a measured one.</p>
+<p><code>change_1y</code> is the score's move in national percentile points since last year's scores (null for a score that did not exist a year ago). <code>components</code> gives the standing of each input on a 0 to 1 scale, so you can see what carried a score. The weights that combine them are not published; the <a href="https://locumetry.com/methodology">methodology</a> explains what each score is for and how to read it. An input that is a province statistic allocated to the district (an estimate) counts a quarter of a measured one.</p>
 </section>
 
 <section class="endpoint" id="ep-history">
 <div class="sig"><span class="method">GET</span><span class="path">/districts/{geo_id}/history</span></div>
-<p class="what">Every feature's values by year, for trajectories and charts.</p>
-<dl><dt><code>feature</code></dt><dd>list; restrict to these feature ids. Without it, all 287 are returned.</dd></dl>
+<p class="what">Every feature's values by year, for trajectories and charts. For the change itself, with its national rank, use <a href="#ep-trends"><code>/trends</code></a>.</p>
+<dl><dt><code>feature</code></dt><dd>list; restrict to these feature ids. Without it, all of them are returned (303 at the time of writing).</dd></dl>
 <pre><code>GET /districts/TR_06_1747/history?feature=population
 
 {"population": [..., {"year": 2023, "value": 571889.0, "is_estimated": false},
                      {"year": 2024, "value": 590309.0, "is_estimated": false},
                      {"year": 2025, "value": 605366.0, "is_estimated": false}]}</code></pre>
+</section>
+
+<section class="endpoint" id="ep-trends">
+<div class="sig"><span class="method">GET</span><span class="path">/districts/{geo_id}/trends</span> &nbsp;·&nbsp; <span class="path">/provinces/{geo_id}/trends</span></div>
+<p class="what">Change over time, ranked. For a district: each series measured for the district itself (population, age structure, education, housing sales, night-time lights, built-up share, births, marriages and the rest) with its latest value, the change over one, five and ten years, and <code>change_5y_percentile</code>: where the five-year change stands among all 973 districts, so 90 means the series moved up faster than in 90 percent of them. For a province: its own series (deposits, loans, earnings, GDP, employment, housing, vehicles, payment stress, age structure), ranked among the 81 provinces, with TRY amounts restated in latest-year prices before the change is measured.</p>
+<dl><dt><code>feature</code></dt><dd>list; restrict to these feature ids</dd></dl>
+<pre><code>GET /districts/TR_06_1747/trends?feature=population&amp;feature=illiteracy_rate
+
+[{"feature_id": "population", "display_name": "Population", "unit": "persons", "change_unit": "%",
+  "latest": {"year": 2025, "value": 605366.0}, "first_year": 2008,
+  "change_1y": 2.55, "change_5y": 10.25, "change_10y": 19.41, "change_5y_percentile": 89.5,
+  "points": [{"year": 2008, "value": 393463.0}, ..., {"year": 2025, "value": 605366.0}]},
+ {"feature_id": "illiteracy_rate", "display_name": "Illiteracy rate", "unit": "share (0-1)", "change_unit": "pp",
+  "latest": {"year": 2025, "value": 0.0109}, "first_year": 2008,
+  "change_1y": -0.07, "change_5y": -0.36, "change_10y": -0.93, "change_5y_percentile": 79.5,
+  "points": [...]}]</code></pre>
+<p><code>change_unit</code> says how to read the changes: <code>pp</code> (percentage points) for shares and rates, <code>%</code> for everything else. A change is measured from the latest point at or before the window, so a series observed every five years still gets a five-year change. Estimates allocated from a province figure are left out of district trends: they would hand every district of the province the same change. The same figures appear on the district and province pages under "Change over time".</p>
 </section>
 
 <section class="endpoint" id="ep-observations">
@@ -191,7 +209,7 @@ console.log(sincan.geo.name, sincan.labels.map(l =&gt; l.label));</code></pre>
 
 <section class="endpoint" id="ep-provinces">
 <div class="sig"><span class="method">GET</span><span class="path">/provinces</span> &nbsp;·&nbsp; <span class="path">/provinces/{geo_id}</span></div>
-<p class="what">The 81 provinces as geography objects; one province with its own features, the province-level scores and the list of its districts.</p>
+<p class="what">The 81 provinces as geography objects; one province with its own features, the province-level scores (each with <code>change_1y</code>) and the list of its districts. Its series over time are at <a href="#ep-trends"><code>/provinces/{geo_id}/trends</code></a>.</p>
 <pre><code>GET /provinces/TR_06
 
 {"geo": {"geo_id": "TR_06", "name": "Ankara", ...},
@@ -369,7 +387,11 @@ for feature, series in hist.items():
     print(feature, [(p["year"], round(p["value"], 3)) for p in series[-5:]])
 
 scores = api.get(f"{BASE}/scores/history", params={"geo_id": "TR_06_1747", "score": "affluence_score"}).json()
-print([(p["year"], round(p["percentile"])) for p in scores["affluence_score"]])</code></pre>
+print([(p["year"], round(p["percentile"])) for p in scores["affluence_score"]])
+
+# the change itself, ranked: which of the district's own series moved fastest against the rest of the country
+for t in api.get(f"{BASE}/districts/TR_06_1747/trends").json():
+    print(f'{t["display_name"]:<36} 5y {t["change_5y"]:+7.2f}{t["change_unit"]}  pct {t["change_5y_percentile"]}')</code></pre>
 
 <h3 id="r-lookalike">Find lookalikes</h3>
 <p>You have one district that works. Ask for the ten most similar ones outside its own province, and read the differences before you believe the match.</p>
@@ -396,11 +418,11 @@ with open("economic_vitality.csv", "w", newline="") as f:
 <tbody>
 <tr><td>economic_vitality_score</td><td>district</td><td>how much economic activity and formation there is: company births, employment, deposits and loans, population growth, cheque discipline</td></tr>
 <tr><td>affluence_score</td><td>district</td><td>purchasing power: earnings, deposits, cars, housing prices, consumer credit, upscale venue density</td></tr>
-<tr><td>commercial_saturation_score</td><td>district</td><td>how crowded the commercial fabric already is relative to residents; high means less room</td></tr>
-<tr><td>economic_momentum_score</td><td>district</td><td>one-year change across population, employment, credit, deposits, housing sales and car registrations</td></tr>
+<tr><td>commercial_saturation_score</td><td>district</td><td>how crowded the commercial fabric already is relative to residents and area, including the satellite-measured built-up share; high means less room</td></tr>
+<tr><td>economic_momentum_score</td><td>district</td><td>one-year change across population, employment, credit, deposits, car registrations, the district's own housing sales and its night-time light over the months reported so far</td></tr>
 <tr><td>industrial_opportunity_score</td><td>district</td><td>industrial zones, employment, earnings, and access to motorway, rail and port</td></tr>
-<tr><td>household_demand_growth_score</td><td>district</td><td>real growth of household deposits, loans, cards and population</td></tr>
-<tr><td>growth_proxy_score</td><td>district</td><td>a summary of growth from the two growth scores and population change</td></tr>
+<tr><td>household_demand_growth_score</td><td>district</td><td>real growth of household deposits, loans, cards and population, from province series allocated to the district</td></tr>
+<tr><td>growth_proxy_score</td><td>district</td><td>a summary of growth from the two growth scores, population change, three-year night-time light growth and five-year built-up growth</td></tr>
 <tr><td>financial_services_opportunity_score</td><td>district</td><td>demand for branches and services against current branch coverage</td></tr>
 <tr><td>commercial_opportunity_score</td><td>district</td><td>underserved demand, the headline volume reading: many, dense and growing residents, affluence and vitality, against the shops already there; not spending power on its own, so read it next to affluence</td></tr>
 <tr><td>gym_opportunity_score, pharmacy_opportunity_score, supermarket_opportunity_score, ev_charger_opportunity_score</td><td>district</td><td>category versions of the same idea, each with the demand drivers that matter for that category</td></tr>
@@ -472,7 +494,7 @@ with open("economic_vitality.csv", "w", newline="") as f:
 <tr><td>401</td><td>missing or unknown key</td><td><code>{"detail": "invalid or missing API key"}</code></td></tr>
 <tr><td>404</td><td>unknown identifier, or a province id given to a district endpoint</td><td><code>{"detail": "unknown district_id"}</code></td></tr>
 <tr><td>422</td><td>a value of the wrong type, such as <code>limit=abc</code></td><td>FastAPI's validation detail</td></tr>
-<tr><td>429</td><td>more requests this minute than your plan allows, or an evaluation key past its daily cap</td><td><code>{"detail": "rate limit exceeded"}</code> with a <code>Retry-After</code> header in seconds; <code>{"detail": "daily cap of 500 requests reached ..."}</code> for a sandbox key</td></tr>
+<tr><td>429</td><td>more requests this minute than your plan allows, or a key past the daily volume in its agreement</td><td><code>{"detail": "rate limit exceeded"}</code> with a <code>Retry-After</code> header in seconds; <code>{"detail": "daily cap of ... requests reached ..."}</code> for the daily volume</td></tr>
 </tbody></table></div>
 <p>Data is rebuilt nightly; responses may be cached for a short time at the edge. Identifiers and field names are stable within v1; new fields may be added, existing ones are not renamed or removed without a new version.</p>
 <p class="note">Locumetry is information, not advice. The API is built to make a shortlist defensible and traceable, not to replace a visit.</p>

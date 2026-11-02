@@ -5,7 +5,7 @@
 Every request carries the key in the X-API-Key header. Districts are addressed by geo_id (TR_06_1747 is Sincan),
 scores by name, score thresholds as national percentiles. The guide with every endpoint and real responses is at
 https://locumetry-data.github.io/locumetry/ and the OpenAPI reference at https://locumetry.com/api/v1/docs.
-Get a sandbox key at https://locumetry.com/partners#sandbox.
+Keys are issued under an agreement; see https://locumetry.com/partners.
 """
 
 import os
