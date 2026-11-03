@@ -140,16 +140,16 @@ console.log(sincan.geo.name, sincan.labels.map(l =&gt; l.label));</code></pre>
    "age_0_14_share": {"value": 0.206, "year": 2025, "is_estimated": false, "category": "age"},
    ... 302 features ...},
  "scores": {
-   "affluence_score": {"score_value": 64.1, "percentile": 73.1, "rank_national": 262, "rank_region": 16,
-                       "period_date": "2026-01-01", "level": "district", "change_1y": -18.0,
-                       "components": {"avg_daily_earning": 0.975, "cars_per_1000": 0.988, "gdp_per_capita_usd": 0.935, ...}},
+   "affluence_score": {"score_value": 66.4, "percentile": 75.6, "rank_national": 238, "rank_region": 17,
+                       "period_date": "2026-01-01", "level": "district", "change_1y": -14.7,
+                       "components": {"avg_daily_earning": 0.975, "cars_per_1000": 0.988, "higher_education_share": 0.781, ...}},
    ... 15 scores ...},
  "labels": [
    {"label": "commuter_town",
     "description": "Dense, growing residential district with little local employment",
     "evidence": {"population_density": 701.562, "workplaces_per_1000": 18.524, "population_growth_3y": 0.019, ...}},
    ...],
- "reading": {"en": "Sincan is a district in Ankara with a population of 605,366. Its affluence score decreased by 18.3 over the last year, while its growth proxy score is in the 99th percentile. ...",
+ "reading": {"en": "Sincan is a district in Ankara with a population of 605,366. ...",
              "tr": "Sincan, Ankara'da 605.366 nüfuslu bir ilçedir. ...",
              "data_as_of": "2026-10-30", "generated_at": "2026-10-31T13:58:02Z"}}</code></pre>
 <p><code>reading</code> is a generated summary, three to five sentences in English and Turkish, written by a language model from this place's own numbers only. Every number and place name in it is checked against the data before it is stored, and it is rewritten only when the numbers behind it change; <code>data_as_of</code> is the date of the data it describes. It is <code>null</code> when no reading has passed the checks yet. Province detail carries the same field.</p>
@@ -243,7 +243,7 @@ console.log(sincan.geo.name, sincan.labels.map(l =&gt; l.label));</code></pre>
              "commercial_saturation_score": {"value": 52.3, "percentile": 53.3, "rank": 455}}},
  {"geo_id": "TR_34_2048", "name": "Arnavutköy", "province": "İstanbul", "population": 358469.0, ...},
  {"geo_id": "TR_34_2014", "name": "Sultanbeyli", "province": "İstanbul", "population": 378908.0, ...},
- ... 7 districts in all ...]</code></pre>
+ ... 9 districts in all ...]</code></pre>
 <p>Only the scores named in the request plus the sort score are returned per row, so the result stays small. An empty list is a valid answer: the thresholds were too strict for that region.</p>
 </section>
 
@@ -275,8 +275,8 @@ console.log(sincan.geo.name, sincan.labels.map(l =&gt; l.label));</code></pre>
 <dl><dt><code>geo_id</code></dt><dd>required</dd><dt><code>score</code></dt><dd>list; restrict to these scores</dd></dl>
 <pre><code>GET /scores/history?geo_id=TR_06_1747&amp;score=affluence_score
 
-{"affluence_score": [..., {"year": 2025, "score_value": 84.98, "percentile": 91.5, "rank_national": 84, "rank_region": 10},
-                          {"year": 2026, "score_value": 64.1, "percentile": 73.1, "rank_national": 262, "rank_region": 16}]}</code></pre>
+{"affluence_score": [..., {"year": 2025, "score_value": 82.73, "percentile": 90.3, "rank_national": 95, "rank_region": 12},
+                          {"year": 2026, "score_value": 66.4, "percentile": 75.6, "rank_national": 238, "rank_region": 17}]}</code></pre>
 </section>
 
 <section class="endpoint" id="ep-labels">
@@ -431,9 +431,9 @@ with open("economic_vitality.csv", "w", newline="") as f:
 <thead><tr><th>Score</th><th>Level</th><th>Reads as</th></tr></thead>
 <tbody>
 <tr><td>economic_vitality_score</td><td>district</td><td>how much economic activity and formation there is: company births, employment, deposits and loans, population growth, cheque discipline</td></tr>
-<tr><td>affluence_score</td><td>district</td><td>purchasing power: earnings, deposits, cars, housing prices, consumer credit, upscale venue density</td></tr>
+<tr><td>affluence_score</td><td>district</td><td>purchasing power: the district's higher-education share and upscale venue density, with earnings, deposits, cars, housing prices and consumer credit as province context</td></tr>
 <tr><td>commercial_saturation_score</td><td>district</td><td>how crowded the commercial fabric already is relative to residents and area, including the satellite-measured built-up share; high means less room</td></tr>
-<tr><td>economic_momentum_score</td><td>district</td><td>one-year change across population, employment, credit, deposits, car registrations, the district's own housing sales and its night-time light over the months reported so far</td></tr>
+<tr><td>economic_momentum_score</td><td>district</td><td>one-year change across population, employment, credit, deposits, car registrations, the district's own housing sales and its night-time light over the months reported so far, plus the five-year shift of its age structure towards or away from 25 to 44</td></tr>
 <tr><td>industrial_opportunity_score</td><td>district</td><td>industrial zones, employment, earnings, and access to motorway, rail and port</td></tr>
 <tr><td>household_demand_growth_score</td><td>district</td><td>real growth of household deposits, loans, cards and population, from province series allocated to the district</td></tr>
 <tr><td>growth_proxy_score</td><td>district</td><td>a summary of growth from the two growth scores, population change, three-year night-time light growth and five-year built-up growth</td></tr>
