@@ -57,7 +57,7 @@ footer{border-top:1px solid var(--line);padding:28px 0;color:var(--muted);font-s
 <h1>District intelligence for Türkiye, as JSON.</h1>
 <p class="lead">Scores, labels, measured features, history and ranked change for all 973 districts and 81 provinces, behind one key and one header. This guide shows every endpoint with a real response and the recipes most people start from.</p>
 <div class="btns"><a class="btn primary" href="#start">Start in two minutes</a><a class="btn" href="https://locumetry.com/api/v1/docs">Interactive reference</a><a class="btn" href="https://github.com/Locumetry-Data/locumetry/tree/main/examples">Examples on GitHub</a></div>
-<div class="stats"><div class="stat"><strong>973 · 81</strong><span>districts and provinces, one boundary set</span></div><div class="stat"><strong>303</strong><span>features per district, each with period and source</span></div><div class="stat"><strong>15 · 48</strong><span>scores and labels, with the evidence behind them</span></div><div class="stat"><strong>2000 →</strong><span>history for the main series</span></div></div>
+<div class="stats"><div class="stat"><strong>973 · 81</strong><span>districts and provinces, one boundary set</span></div><div class="stat"><strong>302</strong><span>features per district, each with period, source and category</span></div><div class="stat"><strong>15 · 48</strong><span>scores and labels, with the evidence behind them</span></div><div class="stat"><strong>2000 →</strong><span>history for the main series</span></div></div>
 </div></section>
 
 <div class="wrap layout">
@@ -110,6 +110,7 @@ console.log(sincan.geo.name, sincan.labels.map(l =&gt; l.label));</code></pre>
 <div class="card"><h3>Scores are percentiles</h3><p><code>percentile</code> is the district's standing among all districts (or among provinces for the two province-level scores): 90 means higher than 90 percent of them. <code>score_value</code> is the underlying 0–100 value, <code>rank_national</code> and <code>rank_region</code> the positions.</p></div>
 <div class="card"><h3>Features carry a period</h3><p>Every feature value comes with the year it describes; observations carry the exact <code>period_date</code> (first day of the year, quarter or month) and the <code>source_id</code>.</p></div>
 <div class="card"><h3>Estimates are flagged</h3><p><code>is_estimated: true</code> marks a value that was allocated from a provincial or national figure rather than measured for that district. Treat it as context, not as a fact about the district.</p></div>
+<div class="card"><h3>Everything is categorised</h3><p>Every feature and every source metric carries a <code>category</code> id, one of the 16 listed at <a href="#ep-catalog"><code>/catalog/categories</code></a> (population, age, education, housing, places, banking and the rest). The site groups its figures by the same categories, so a row on a district page and a field in the API mean the same thing.</p></div>
 <div class="card"><h3>Change is ranked too</h3><p>Every score carries <code>change_1y</code>, its move in national percentile points since last year, and <a href="#ep-trends"><code>/trends</code></a> gives each measured series with its change over one, five and ten years and where that change stands among all districts.</p></div>
 </div>
 
@@ -130,13 +131,13 @@ console.log(sincan.geo.name, sincan.labels.map(l =&gt; l.label));</code></pre>
 
 <section class="endpoint" id="ep-district">
 <div class="sig"><span class="method">GET</span><span class="path">/districts/{geo_id}</span></div>
-<p class="what">One district in full: the geography, the latest value of every feature, every score with its inputs and its move since last year, and the labels with the evidence that fired them. Province-level scores are inherited from the district's province and marked <code>"level": "province"</code>.</p>
+<p class="what">One district in full: the geography, the latest value of every feature with its year and <code>category</code>, every score with its inputs and its move since last year, and the labels with the evidence that fired them. Province-level scores are inherited from the district's province and marked <code>"level": "province"</code>.</p>
 <pre><code>GET /districts/TR_06_1747
 
 {"geo": {"geo_id": "TR_06_1747", "name": "Sincan", "parent_geo_id": "TR_06", "region_code": "TR5", ...},
  "features": {
-   "population": {"value": 605366.0, "year": 2025, "is_estimated": false},
-   "age_0_14_share": {"value": 0.1784, "year": 2025, "is_estimated": true},
+   "population": {"value": 605366.0, "year": 2025, "is_estimated": false, "category": "population"},
+   "age_0_14_share": {"value": 0.206, "year": 2025, "is_estimated": false, "category": "age"},
    ... 302 features ...},
  "scores": {
    "affluence_score": {"score_value": 64.1, "percentile": 73.1, "rank_national": 262, "rank_region": 16,
@@ -172,15 +173,15 @@ console.log(sincan.geo.name, sincan.labels.map(l =&gt; l.label));</code></pre>
 <dl><dt><code>feature</code></dt><dd>list; restrict to these feature ids</dd></dl>
 <pre><code>GET /districts/TR_06_1747/trends?feature=population&amp;feature=illiteracy_rate
 
-[{"feature_id": "population", "display_name": "Population", "unit": "persons", "change_unit": "%",
+[{"feature_id": "population", "display_name": "Population", "category": "population", "unit": "persons", "change_unit": "%",
   "latest": {"year": 2025, "value": 605366.0}, "first_year": 2008,
   "change_1y": 2.55, "change_5y": 10.25, "change_10y": 19.41, "change_5y_percentile": 89.5,
   "points": [{"year": 2008, "value": 393463.0}, ..., {"year": 2025, "value": 605366.0}]},
- {"feature_id": "illiteracy_rate", "display_name": "Illiteracy rate", "unit": "share (0-1)", "change_unit": "pp",
+ {"feature_id": "illiteracy_rate", "display_name": "Illiteracy rate", "category": "education", "unit": "share (0-1)", "change_unit": "pp",
   "latest": {"year": 2025, "value": 0.0109}, "first_year": 2008,
   "change_1y": -0.07, "change_5y": -0.36, "change_10y": -0.93, "change_5y_percentile": 79.5,
   "points": [...]}]</code></pre>
-<p><code>change_unit</code> says how to read the changes: <code>pp</code> (percentage points) for shares and rates, <code>%</code> for everything else. A change is measured from the latest point at or before the window, so a series observed every five years still gets a five-year change. Estimates allocated from a province figure are left out of district trends: they would hand every district of the province the same change. The same figures appear on the district and province pages under "Change over time".</p>
+<p><code>change_unit</code> says how to read the changes: <code>pp</code> (percentage points) for shares and rates, <code>%</code> for everything else. A change is measured from the latest point at or before the window, so a series observed every five years still gets a five-year change. Estimates allocated from a province figure are left out of district trends: they would hand every district of the province the same change. The same figures appear on the district and province pages, in each indicator's row under its category.</p>
 </section>
 
 <section class="endpoint" id="ep-observations">
@@ -297,14 +298,27 @@ GET /labels/high_growth_underserved?province=TR_06
 </section>
 
 <section class="endpoint" id="ep-catalog">
-<div class="sig"><span class="method">GET</span><span class="path">/catalog/features</span> &nbsp;·&nbsp; <span class="path">/scores</span> &nbsp;·&nbsp; <span class="path">/metrics</span></div>
-<p class="what">The catalogues. What each of the 287 features is, in which unit, which direction is better and how far back it goes; which inputs each of the 15 scores uses; and the 165 raw metrics with their publisher and native code.</p>
-<pre><code>GET /catalog/features
+<div class="sig"><span class="method">GET</span><span class="path">/catalog/categories</span> &nbsp;·&nbsp; <span class="path">/catalog/features</span> &nbsp;·&nbsp; <span class="path">/scores</span> &nbsp;·&nbsp; <span class="path">/metrics</span></div>
+<p class="what">The catalogues. The 16 categories that every feature and metric belongs to, with their titles and what they hold; what each of the 302 features is, in which unit, which direction is better and how far back it goes; which inputs each of the 15 scores uses; and the 173 raw metrics with their publisher and native code. Features and metrics come back in category order; <code>category=</code> restricts either list to one.</p>
+<pre><code>GET /catalog/categories
 
-[{"feature_id": "airport_access_score", "display_name": "Access to airports", "category": "accessibility",
-  "unit": "index", "higher_is": "better",
-  "description": "Access to airports from the district centre, counting nearer ones more than distant ones.",
-  "rows": 973, "first_period": "2026-01-01", "last_period": "2026-01-01", "has_estimates": false}, ...]
+[{"category": "population", "title": "Population and households",
+  "description": "Residents, their growth and movement, households, births, marriages and divorces from the TÜİK address-based registry.",
+  "features": 11, "metrics": 8},
+ {"category": "age", "title": "Age structure", "description": "Shares of residents by age band and how fast those shares move.",
+  "features": 8, "metrics": 5},
+ {"category": "education", ...}, {"category": "housing", ...}, {"category": "places", ...}, {"category": "place_change", ...},
+ {"category": "built_environment", ...}, {"category": "night_lights", ...}, {"category": "access", ...},
+ {"category": "banking", ...}, {"category": "banking_growth", ...}, {"category": "credit_stress", ...},
+ {"category": "economy", ...}, {"category": "business", ...}, {"category": "vehicles", ...},
+ {"category": "macro", "title": "National series", ..., "features": 0, "metrics": 9}]
+
+GET /catalog/features?category=age
+
+[{"feature_id": "age_0_14_share", "display_name": "Children (0-14) share", "category": "age",
+  "unit": "share (0-1)", "higher_is": "neutral",
+  "description": "Share of residents aged 0-14. TÜİK registry by age band for every district (MEDAS, 2007 on); ...",
+  "rows": 18809, "first_period": "2008-01-01", "last_period": "2025-01-01", "has_estimates": false}, ...]
 
 GET /scores
 
@@ -313,8 +327,8 @@ GET /scores
 
 GET /metrics
 
-[{"metric_id": "bank_branches", "display_name": "Domestic bank branches", "category": "banking", "unit": "count",
-  "frequency": "quarterly", "source_id": "bddk_finturk", "geo_level_min": "province", ...}, ...]</code></pre>
+[{"metric_id": "births", "display_name": "Live births", "category": "population", "unit": "persons",
+  "frequency": "yearly", "source_id": "tuik", "geo_level_min": "district", ...}, ...]</code></pre>
 </section>
 
 <section class="endpoint" id="ep-neighborhoods">

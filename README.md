@@ -123,7 +123,7 @@ for row in hits:
 | `/screen` | districts matching label and percentile conditions, sorted by a score |
 | `/rankings`, `/features` | national or regional ranking on one score, or on one measured feature |
 | `/scores/history` | a district's scores by year |
-| `/labels`, `/scores`, `/catalog/features`, `/metrics` | the catalogues: what each label, score, feature and metric means |
+| `/catalog/categories`, `/labels`, `/scores`, `/catalog/features`, `/metrics` | the catalogues: the 16 categories every feature and metric belongs to, and what each label, score, feature and metric means |
 | `/neighborhoods`, `/h3` | neighbourhood population; a district as a hexagon grid with population and distances |
 | `/usage`, `/health` | your meter; the service's state |
 
