@@ -235,14 +235,14 @@ console.log(sincan.geo.name, sincan.labels.map(l =&gt; l.label));</code></pre>
 <pre><code>GET /screen?min_score=affluence_score:75&amp;min_score=economic_momentum_score:60
            &amp;max_score=commercial_saturation_score:60&amp;sort=commercial_opportunity_score
 
-[{"geo_id": "TR_41_2059", "name": "Çayırova", "province": "Kocaeli", "population": 162262.0,
-  "labels": ["growth_hotspot", "industrial_hub", "logistics_corridor", "transit_connected", "warehouse_zone"],
-  "scores": {"commercial_opportunity_score": {"value": 84.0, "percentile": 99.9, "rank": 2},
-             "affluence_score": {"value": 74.2, "percentile": 84.6, "rank": 151},
-             "economic_momentum_score": {"value": 60.0, "percentile": 83.5, "rank": 161},
-             "commercial_saturation_score": {"value": 52.3, "percentile": 53.3, "rank": 455}}},
- {"geo_id": "TR_34_2048", "name": "Arnavutköy", "province": "İstanbul", "population": 358469.0, ...},
+[{"geo_id": "TR_06_1747", "name": "Sincan", "province": "Ankara", "population": 605366.0,
+  "labels": ["commuter_town", "growth_hotspot", "high_growth_underserved", "industrial_hub", "residential_zone"],
+  "scores": {"commercial_opportunity_score": {"value": 82.7, "percentile": 99.7, "rank": 4},
+             "affluence_score": {"value": 66.4, "percentile": 75.6, "rank": 238},
+             "economic_momentum_score": {"value": 68.4, "percentile": 94.8, "rank": 52},
+             "commercial_saturation_score": {"value": 46.7, "percentile": 46.1, "rank": 525}}},
  {"geo_id": "TR_34_2014", "name": "Sultanbeyli", "province": "İstanbul", "population": 378908.0, ...},
+ {"geo_id": "TR_34_2048", "name": "Arnavutköy", "province": "İstanbul", "population": 358469.0, ...},
  ... 9 districts in all ...]</code></pre>
 <p>Only the scores named in the request plus the sort score are returned per row, so the result stays small. An empty list is a valid answer: the thresholds were too strict for that region.</p>
 </section>
