@@ -56,6 +56,9 @@ market researchers and analysts who need Turkish regional data in one consistent
    than 90 percent of districts". The methodology page explains what goes into each score and how to read it.
 5. **Publish.** The site, the comparison and screening tools, the reports and the API read from the same
    nightly build.
+6. **Freeze.** Once a month, after the monthly sources have landed, the whole dataset is frozen as a numbered
+   release (`2026.11`) that is never rewritten. Its manifest lists a hash and a row count for every file, the
+   period each source reaches and the model versions, so work built on a release can be reproduced later.
 
 The methodology is described in full at [locumetry.com/methodology](https://locumetry.com/methodology).
 
@@ -125,6 +128,7 @@ for row in hits:
 | `/scores/history` | a district's scores by year |
 | `/catalog/categories`, `/labels`, `/scores`, `/catalog/features`, `/metrics` | the catalogues: the 16 categories every feature and metric belongs to, and what each label, score, feature and metric means |
 | `/neighborhoods`, `/h3` | neighbourhood population; a district as a hexagon grid with population and distances |
+| `/embed-token` | a short-lived token for the embeddable district card, so your key never appears in a page |
 | `/usage`, `/health` | your meter; the service's state |
 
 The [API guide](https://locumetry-data.github.io/locumetry/) shows each endpoint with a real response and the

@@ -65,7 +65,7 @@ footer{border-top:1px solid var(--line);padding:28px 0;color:var(--muted);font-s
 <p class="h">Guide</p>
 <a href="#start">Start</a><a href="#auth">Authentication</a><a href="#ids">Identifiers</a><a href="#reading">Reading the numbers</a>
 <p class="h">Endpoints</p>
-<a href="#ep-districts">/districts</a><a href="#ep-district">/districts/{geo_id}</a><a href="#ep-history">…/history</a><a href="#ep-trends">…/trends</a><a href="#ep-observations">…/observations</a><a href="#ep-similar">…/similar</a><a href="#ep-provinces">/provinces</a><a href="#ep-screen">/screen</a><a href="#ep-rankings">/rankings</a><a href="#ep-features">/features</a><a href="#ep-scores-history">/scores/history</a><a href="#ep-labels">/labels</a><a href="#ep-catalog">catalogues</a><a href="#ep-neighborhoods">/neighborhoods</a><a href="#ep-h3">/h3</a><a href="#ep-usage">/usage, /health</a>
+<a href="#ep-districts">/districts</a><a href="#ep-district">/districts/{geo_id}</a><a href="#ep-history">…/history</a><a href="#ep-trends">…/trends</a><a href="#ep-observations">…/observations</a><a href="#ep-similar">…/similar</a><a href="#ep-provinces">/provinces</a><a href="#ep-screen">/screen</a><a href="#ep-rankings">/rankings</a><a href="#ep-features">/features</a><a href="#ep-scores-history">/scores/history</a><a href="#ep-labels">/labels</a><a href="#ep-catalog">catalogues</a><a href="#ep-neighborhoods">/neighborhoods</a><a href="#ep-h3">/h3</a><a href="#ep-embed">/embed-token</a><a href="#ep-usage">/usage, /health</a>
 <p class="h">Recipes</p>
 <a href="#r-screen">Site-selection screen</a><a href="#r-compare">Compare a shortlist</a><a href="#r-track">Track a district</a><a href="#r-lookalike">Find lookalikes</a><a href="#r-csv">Export to CSV</a>
 <p class="h">Reference</p>
@@ -93,7 +93,7 @@ console.log(sincan.geo.name, sincan.labels.map(l =&gt; l.label));</code></pre>
 <p>Keys are issued per organisation under an agreement, with a technical trial arranged as part of it; see the <a href="https://locumetry.com/partners">partners page</a> and the <a href="https://locumetry.com/pricing">plans page</a>. Runnable versions of everything on this page are in the <a href="https://github.com/Locumetry-Data/locumetry/tree/main/examples">examples folder</a>.</p>
 
 <h2 id="auth">Authentication</h2>
-<p>The key goes in the header only. A key in the URL would end up in access logs, so query-string keys are not accepted. A missing or unknown key answers <code>401</code>; more requests per minute than your plan allows answers <code>429</code> with a <code>Retry-After</code> header saying how many seconds to wait. Each key is metered per day and route, and you can read your own meter at <a href="#ep-usage"><code>/usage</code></a>.</p>
+<p>The key goes in the header only. A key in the URL would end up in access logs, so query-string keys are not accepted. A missing or unknown key answers <code>401</code>; more requests per minute than your plan allows answers <code>429</code> with a <code>Retry-After</code> header saying how many seconds to wait. Each key is metered per day and route, and you can read your own meter at <a href="#ep-usage"><code>/usage</code></a>. The embeddable district card is the one place a page needs access of its own: it carries a token from <a href="#ep-embed"><code>/embed-token</code></a>, never the key.</p>
 
 <h2 id="ids">Identifiers</h2>
 <p>Places are addressed by stable identifiers, never by name. Names change spelling and case between sources; identifiers do not.</p>
@@ -352,6 +352,20 @@ GET /metrics
                      "school_distance_km": 14.82, "rail_station_distance_km": 16.52, "motorway_junction_distance_km": 9.58,
                      "major_road_km": 0.0},
  ... 155 cells ...}</code></pre>
+</section>
+
+<section class="endpoint" id="ep-embed">
+<div class="sig"><span class="method">GET</span><span class="path">/embed-token</span></div>
+<p class="what">A token for the embeddable district card. An iframe cannot send a header and your key must never appear in a page, so your server asks for a token here and the page carries only that. The token opens the card and nothing else; each card view is rate limited and metered against your key like an API call, and revoking or rotating the key ends every token minted with it.</p>
+<dl><dt><code>district</code></dt><dd>ties the token to one district; omit it for any district and put the district id in the address yourself</dd><dt><code>origin</code></dt><dd>your site's origin, such as <code>https://www.example.com</code>; the card then renders only inside a frame on that site and is refused when opened directly</dd><dt><code>ttl</code></dt><dd>lifetime in seconds, default 3,600; at most 86,400 without an origin, up to 366 days with one</dd></dl>
+<pre><code>GET /embed-token?district=TR_34_1421&amp;origin=https://www.example.com
+
+{"token": "emb_eyJjIjoi….q0Zr…", "expires_at": "2026-11-15T19:40:12+00:00", "district": "TR_34_1421",
+ "origin": "https://www.example.com",
+ "embed_url": "https://locumetry.com/widget/TR_34_1421?token=emb_eyJjIjoi….q0Zr…"}
+
+&lt;iframe src="https://locumetry.com/widget/TR_34_1421?token=emb_eyJjIjoi….q0Zr…"
+  width="360" height="420" style="border:0" loading="lazy"&gt;&lt;/iframe&gt;</code></pre>
 </section>
 
 <section class="endpoint" id="ep-usage">
