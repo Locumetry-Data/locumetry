@@ -149,10 +149,10 @@ console.log(sincan.geo.name, sincan.labels.map(l =&gt; l.label));</code></pre>
     "description": "Dense, growing residential district with little local employment",
     "evidence": {"population_density": 701.562, "workplaces_per_1000": 18.524, "population_growth_3y": 0.019, ...}},
    ...],
- "reading": {"en": "Sincan is a district in Ankara with a population of 605,366. ...",
+ "summary": {"en": "Sincan is a district in Ankara with a population of 605,366. ...",
              "tr": "Sincan, Ankara'da 605.366 nüfuslu bir ilçedir. ...",
              "data_as_of": "2026-10-30", "generated_at": "2026-10-31T13:58:02Z"}}</code></pre>
-<p><code>reading</code> is a generated summary, three to five sentences in English and Turkish, written by a language model from this place's own numbers only. Every number and place name in it is checked against the data before it is stored, and it is rewritten only when the numbers behind it change; <code>data_as_of</code> is the date of the data it describes. It is <code>null</code> when no reading has passed the checks yet. Province detail carries the same field.</p>
+<p><code>summary</code> is a generated summary, three to five sentences in English and Turkish, written by a language model from this place's own numbers only. Every number and place name in it is checked against the data before it is stored, and it is rewritten only when the numbers behind it change; <code>data_as_of</code> is the date of the data it describes. It is <code>null</code> when no reading has passed the checks yet. Province detail carries the same field.</p>
 <p><code>change_1y</code> is the score's move in national percentile points since last year's scores (null for a score that did not exist a year ago). <code>components</code> gives the standing of each input on a 0 to 1 scale, so you can see what carried a score. The weights that combine them are not published; the <a href="https://locumetry.com/methodology">methodology</a> explains what each score is for and how to read it. An input that is a province statistic allocated to the district (an estimate) counts a quarter of a measured one.</p>
 </section>
 
@@ -438,7 +438,7 @@ with open("economic_vitality.csv", "w", newline="") as f:
 <tr><td>household_demand_growth_score</td><td>district</td><td>real growth of household deposits, loans, cards and population, from province series allocated to the district</td></tr>
 <tr><td>growth_proxy_score</td><td>district</td><td>a summary of growth from the two growth scores, population change, three-year night-time light growth and five-year built-up growth</td></tr>
 <tr><td>financial_services_opportunity_score</td><td>district</td><td>demand for branches and services against current branch coverage</td></tr>
-<tr><td>commercial_opportunity_score</td><td>district</td><td>underserved demand, the headline volume reading: many, dense and growing residents, affluence and vitality, against the shops already there; not spending power on its own, so read it next to affluence</td></tr>
+<tr><td>commercial_opportunity_score</td><td>district</td><td>underserved demand, the headline volume measure: many, dense and growing residents, affluence and vitality, against the shops already there; not spending power on its own, so read it next to affluence</td></tr>
 <tr><td>gym_opportunity_score, pharmacy_opportunity_score, supermarket_opportunity_score, ev_charger_opportunity_score</td><td>district</td><td>category versions of the same idea, each with the demand drivers that matter for that category</td></tr>
 <tr><td>business_activity_growth_score</td><td>province</td><td>growth of company formation, commercial credit and deposits, merchants and POS terminals</td></tr>
 <tr><td>credit_stress_score</td><td>province</td><td>non-performing loans, protested bills, returned cheques and company churn; high means more stress</td></tr>

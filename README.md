@@ -20,7 +20,7 @@ report problems. The service itself runs at [locumetry.com](https://locumetry.co
   cafés, clinics, gyms, schools, transport), each with its period and source.
 - **Scores.** Economic vitality, affluence, commercial saturation, economic momentum, industrial opportunity,
   household demand growth, financial services opportunity and underserved demand (`commercial_opportunity_score`,
-  a volume reading: many, dense and growing residents against few shops per resident), plus category
+  a volume measure: many, dense and growing residents against few shops per resident), plus category
   opportunity scores for gyms, pharmacies, supermarkets and EV chargers. Every score is published as a national
   percentile and rank, with the measured features behind it.
 - **Labels.** Plain-language flags such as growing, affluent or underserved in a category, derived from the
@@ -32,7 +32,7 @@ report problems. The service itself runs at [locumetry.com](https://locumetry.co
   snapshot. Every score carries its move since last year, and every series measured for the district (population,
   age structure, education, housing sales, night-time lights, built-up area) its change over one, five and ten years,
   ranked against all other districts. The same for a province's own series, in today's prices.
-- **Readings.** A short generated summary on every district and province page, in English and Turkish, written
+- **Summaries.** A short generated summary on every district and province page, in English and Turkish, written
   from that place's own numbers and checked against them before it is shown. Rewritten only when the numbers change.
 - **Exports and reports.** Any comparison downloads as a standalone HTML page (print it to PDF) or CSV. The paid
   district report is shown in full as a [public sample](https://locumetry.com/sample-report), with its JSON.
@@ -115,7 +115,7 @@ for row in hits:
 | Endpoint | Returns |
 |---|---|
 | `/districts`, `/provinces` | the geography, filterable by province or name |
-| `/districts/{geo_id}` | one district: latest scores with their inputs and their move since last year, labels with evidence, every measured feature, the generated reading |
+| `/districts/{geo_id}` | one district: latest scores with their inputs and their move since last year, labels with evidence, every measured feature, the generated summary |
 | `/districts/{geo_id}/history` | a district's features by year |
 | `/districts/{geo_id}/trends`, `/provinces/{geo_id}/trends` | each measured series with its change over one, five and ten years, and where the five-year change ranks nationally |
 | `/districts/{geo_id}/observations` | the publisher's raw numbers behind the features, with period, unit and source |
